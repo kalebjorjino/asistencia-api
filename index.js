@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware CORS para permitir solicitudes desde el frontend (ajústalo según tu necesidad)
 app.use(cors({
-  origin: 'https://www.hrcallao.gob.pe/asistencia-frontend', // Reemplaza con la URL de tu frontend
+  origin: 'http://localhost:5173', // Reemplaza con la URL de tu frontend
   methods: 'POST, OPTIONS',
   allowedHeaders: 'Content-Type',
 }));
