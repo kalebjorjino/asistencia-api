@@ -1,46 +1,45 @@
-<header id="topnav">
-    <nav class="navbar-custom">
-        <ul class="list-unstyled topbar-right-menu float-right mb-0">
-            <li class="dropdown notification-list">
-                <a class="nav-link dropdown-toggle nav-user" data-toggle="dropdown" href="#" role="button"
-                    aria-haspopup="false" aria-expanded="false">
-                    <img src="../../public/assets/images/logo2.png" alt="user" class="rounded-circle"> <span
-                        class="ml-1 font-weight-bold text-primary"><?php echo $_SESSION["usu_nom"] ?>
-                    <?php echo $_SESSION["usu_ape"] ?><i class="mdi mdi-chevron-down "></i> </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown ">
-                    <!-- item-->
-                    <a href="../Logout/logout.php" class="dropdown-item notify-item">
-                        <i class="dripicons-power"></i><span class="font-weight-bold text-primary">Cerrar Sesión</span>
-                    </a>
+<header class="site-header">
+    <div class="container-fluid">
 
-                </div>
-            </li>
-        </ul>
+        <a href="#" class="site-logo">
+           <h2>MegAs</h2>
+        </a>
 
-        <ul class="list-unstyled menu-left mb-0">
-            <li class="float-left">
-                <a href="index.html" class="logo">
-                    <span class="logo-lg">
-                        <img src="../../public/assets/images/logo2.png" alt="" height="50" width="50">
-                    </span>
-                    <span class="logo-sm">
-                        <img src="../../public/assets/images/logo2.png" alt="" height="50" width="50">
-                    </span>
-                </a>
-            </li>
-            <li class="float-left">
-                <a class="button-menu-mobile open-left navbar-toggle">
-                    <div class="lines">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+        <button id="show-hide-sidebar-toggle" class="show-hide-sidebar">
+            <span>toggle menu</span>
+        </button>
+
+        <button class="hamburger hamburger--htla">
+            <span>toggle menu</span>
+        </button>
+
+        <div class="site-header-content">
+            <div class="site-header-content-in">
+                <div class="site-header-shown">
+                    <div class="dropdown user-menu">
+                        <button class="dropdown-toggle" id="dd-user-menu" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="../../public/assets/images/logo2.png" alt="">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd-user-menu">
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="../Logout/logout.php"><span class="font-icon glyphicon glyphicon-log-out"></span>Cerrar Sesion</a>
+                        </div>
                     </div>
-                </a>
-            </li>
-            <input  type="hidden" id="user_idx" value="<?php echo $_SESSION["usu_id"] ?>"><!-- ID del Usuario-->
-            <input type="hidden" id="rol_idx" value="<?php echo $_SESSION["rol_id"] ?>"><!-- Rol del Usuario-->
-        </ul>
-    </nav>
-    <!-- end navbar-custom -->
+                </div>
+
+                <div class="mobile-menu-right-overlay"></div>
+
+                <input type="hidden" id="user_idx" value="<?php echo $_SESSION["usu_id"] ?>"><!-- ID del Usuario-->
+                <input type="hidden" id="rol_idx" value="<?php echo $_SESSION["rol_id"] ?>"><!-- Rol del Usuario-->
+
+                <div class="dropdown dropdown-typical">
+                    <a href="#" class="dropdown-toggle no-arr">
+                        <span class="font-icon font-icon-user"></span>
+                        <span class="lblcontactonomx"><?php echo $_SESSION["usu_nom"] ?> <?php echo $_SESSION["usu_ape"] ?></span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </header>

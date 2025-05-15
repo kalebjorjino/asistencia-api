@@ -1,59 +1,74 @@
 <?php
-require_once("../../config/conexion.php");
-if(isset($_SESSION["usu_id"])){
+  require_once("../../config/conexion.php"); 
+  if(isset($_SESSION["usu_id"])){ 
 ?>
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <title>Listado de Asistencia</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    <meta content="Coderthemes" name="author" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<html>
     <?php require_once("../MainHead/head.php");?>
+	<title>Asistencia</title>
 </head>
-<div id="wrapper">
+<body class="with-side-menu">
+
     <?php require_once("../MainHeader/header.php");?>
+
+    <div class="mobile-menu-left-overlay"></div>
+    
     <?php require_once("../MainSidebar/sidebar.php");?>
-    <div class="content-page">
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12 py-3">
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="datatable-buttons"
-                                           class="table table-striped table-bordered dt-responsive nowrap">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">DNI</th>
-                                                <th scope="col">Empleado</th>
-                                                <th scope="col">Locales</th>
-                                                <th scope="col">Entrada</th>
-                                                <th scope="col">Salida</th>
-                                                <th scope="col">Ubicación</th>
-                                                <th scope="col">Foto</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div> </div> </div>
+
+	<!-- Contenido -->
+	<div class="page-content">
+		<div class="container-fluid">
+			<header class="section-header">
+				<div class="tbl">
+					<div class="tbl-row">
+						<div class="tbl-cell">
+							<h3>Asistencia</h3>
+							<ol class="breadcrumb breadcrumb-simple">
+								<li><a href="#">Home</a></li>
+								<li class="active">Asistencia</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</header>
+
+			<div class="box-typical box-typical-padding">
+				<table id="datatable-buttons" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+					<thead>
+						<tr>
+							
+                                                <th class="text-center" style="width: 5%;">ID</th>
+                                                <th class="text-center" style="width: 5%;">DNI</th>
+                                                <th class="text-center" style="width: 5%;">Empleado</th>
+                                                <th class="text-center" style="width: 5%;">Locales</th>
+                                                <th class="text-center" style="width: 5%;">Entrada</th>
+                                                <th class="text-center" style="width: 5%;">Salida</th>
+                                                <th class="text-center" style="width: 5%;">Ubicación</th>
+                                                <th class="text-center" style="width: 5%;">Foto</th>
+						</tr>
+					</thead>
+					<tbody>
+
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+	<!-- Contenido -->
+
+    <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
-    </div>
-</div>
-<?php require_once("../MainJs/index.php");?>
-<script type="text/javascript" src="empleado.js"></script>
+
+	<?php require_once("../MainJs/index.php");?>
+	
+	<script type="text/javascript" src="empleado.js"></script>
+
+
+</body>
+</html>
 <?php
-} else {
+  } else {
     header("Location:".Conectar::ruta()."index.php");
-}
+  }
 ?>
