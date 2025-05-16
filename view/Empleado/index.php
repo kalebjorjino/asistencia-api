@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <?php require_once("../MainHead/head.php");?>
-	<title>Asistencia</title>
+	<title>Empleados</title>
 </head>
 <body class="with-side-menu">
 
@@ -22,10 +22,10 @@
 				<div class="tbl">
 					<div class="tbl-row">
 						<div class="tbl-cell">
-							<h3>Asistencia</h3>
+							<h3>Empleados</h3>
 							<ol class="breadcrumb breadcrumb-simple">
 								<li><a href="#">Home</a></li>
-								<li class="active">Asistencia</li>
+								<li class="active">Empleados</li>
 							</ol>
 						</div>
 					</div>
@@ -33,18 +33,19 @@
 			</header>
 
 			<div class="box-typical box-typical-padding">
+                <button type="button" id="btnnuevo" class="btn btn-inline btn-primary">Nuevo Registro</button>
 				<table id="datatable-buttons" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 					<thead>
 						<tr>
 							
                                                 <th class="text-center" style="width: 5%;">ID</th>
                                                 <th class="text-center" style="width: 5%;">DNI</th>
-                                                <th class="text-center" style="width: 5%;">Empleado</th>
-                                                <th class="text-center" style="width: 5%;">Locales</th>
-                                                <th class="text-center" style="width: 5%;">Entrada</th>
-                                                <th class="text-center" style="width: 5%;">Salida</th>
-                                                <th class="text-center" style="width: 5%;">Ubicación</th>
-                                                <th class="text-center" style="width: 5%;">Foto</th>
+                                                <th class="text-center" style="width: 5%;">Nombre</th>
+                                                <th class="text-center" style="width: 5%;">Profesion</th>
+                                                <th class="text-center" style="width: 5%;">Fecha Registro</th>
+                                                <th class="text-center" style="width: 5%;"></th>
+                                                <th class="text-center" style="width: 5%;"></th>
+                                                
 						</tr>
 					</thead>
 					<tbody>
@@ -59,6 +60,8 @@
 
     <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
+
+    <?php require_once("modalEmpleado.php");?>
 
 	<?php require_once("../MainJs/index.php");?>
 	

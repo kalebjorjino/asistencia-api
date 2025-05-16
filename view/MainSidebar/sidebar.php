@@ -18,14 +18,14 @@
             <nav class="side-menu">
                 <ul class="side-menu-list">
                     <li class="magenta with-sub opened">
-                        <a href="..\Empleado\">
+                        <a href="..\Asistencia\">
                             <span class="font-icon font-icon-contacts"></span>
                             <span class="lbl">Asistencias</span>
                         </a>
                     </li>
 
                     <li class="red">
-                        <a href="#">
+                        <a href="..\Empleado\">
                             <span class="font-icon font-icon-notebook"></span>
                             <span class="lbl">Empleados</span>
                         </a>

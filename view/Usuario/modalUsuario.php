@@ -1,7 +1,7 @@
 <div id="modalUsuario" class="modal fade bd-example-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #125687;">
+            <div class="modal-header">
                 <h4 class="modal-title text-white" id="mdltitulo"></h4>
             </div>
             <form method="post" id="usuario_form">
