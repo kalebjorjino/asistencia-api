@@ -31,7 +31,7 @@
                         </a>
                     </li>
                     <li class="green with-sub opened">
-                        <a href="#">
+                        <a href="..\Local\">
                             <span class="glyphicon glyphicon-list-alt"></span>
                             <span class="lbl">Locales</span>
                         </a>
