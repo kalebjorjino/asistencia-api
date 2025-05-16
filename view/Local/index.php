@@ -37,7 +37,7 @@
 				<table id="datatable-buttons" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 					<thead>
 						<tr>
-							
+							                    <th class="text-center" style="width: 5%;">ID</th>
                                                 <th class="text-center" style="width: 5%;">Locales</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>

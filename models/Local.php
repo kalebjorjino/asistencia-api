@@ -4,7 +4,11 @@
         public function get_local(){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT * FROM tm_local WHERE est=1;";
+            $sql="SELECT 
+            local_id,
+            local_nom 
+            FROM tm_local 
+            WHERE est=1;";
             $sql=$conectar->prepare($sql);
             $sql->execute();
             return $resultado=$sql->fetchAll();
@@ -13,7 +17,11 @@
         public function get_local_x_id($local_id){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT * FROM tm_local WHERE est=1
+            $sql="SELECT 
+            local_id,
+            local_nom 
+            FROM tm_local 
+            WHERE est=1
                 AND tm_local.local_id = ?";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $local_id);
