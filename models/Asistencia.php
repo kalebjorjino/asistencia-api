@@ -50,23 +50,21 @@
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public function crearAsistencia($usuarioId, $local_id, $ubicacion, $foto){
+        public function crearAsistencia($usuarioId, $ubicacion, $foto){
             $conectar=parent::conexion();
             parent::set_names();
             $sql="INSERT INTO asistencia
             (
                 id_empleado,
-                local_id,
                 ubicacion,
                 foto,
                 hora_entrada
             )
-            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $usuarioId);
-            $sql->bindValue(2, $local_id);
-            $sql->bindValue(3, $ubicacion);
-            $sql->bindValue(4, $foto);
+            $sql->bindValue(2, $ubicacion);
+            $sql->bindValue(3, $foto);
             $sql->execute();
             return $conectar->lastInsertId();
         }

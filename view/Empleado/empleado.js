@@ -34,6 +34,8 @@ function guardaryeditar(e){
 }
 
 
+
+
 $(document).ready(function(){
     tabla=$('#datatable-buttons').dataTable({
         "aProcessing": true,
@@ -88,6 +90,10 @@ $(document).ready(function(){
         }     
     }).DataTable(); 
 
+    $.post("../../controller/turno.php?op=combo",function(data, status){
+        $('#turno_id').html(data);
+    });
+
   
 });
 
@@ -100,6 +106,7 @@ function editar(id){
         $('#dni').val(data.dni);
         $('#nombre').val(data.nombre);
         $('#profesion').val(data.profesion);
+        $('#turno_nom').val(data.turno_nom);
     }); 
 
     $('#modalEmpleado').modal('show');

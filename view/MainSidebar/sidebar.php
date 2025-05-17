@@ -30,13 +30,12 @@
                             <span class="lbl">Empleados</span>
                         </a>
                     </li>
-                    <li class="green with-sub opened">
-                        <a href="..\Local\">
+                     <li class="green with-sub opened">
+                        <a href="..\Turno\">
                             <span class="glyphicon glyphicon-list-alt"></span>
-                            <span class="lbl">Locales</span>
+                            <span class="lbl">Turnos</span>
                         </a>
                     </li>
-
                     <li class="blue-dirty">
                         <a href="..\Usuario">
                             <span class="font-icon font-icon-user"></span>

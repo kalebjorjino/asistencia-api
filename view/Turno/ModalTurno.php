@@ -19,8 +19,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="hora_final">Hora Final</label>
-                        <input type="time" class="form-control" id="hora_final" name="hora_final"  required>
+                        <label class="form-label" for="hora_fin">Hora Final</label>
+                        <input type="time" class="form-control" id="hora_fin" name="hora_fin"  required>
                     </div>
                 </div>
                 <div class="modal-footer">

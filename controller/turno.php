@@ -18,11 +18,11 @@
         break;
 
          case "guardaryeditar":
-            if(empty($_POST["id"])){       
-                $turno->insert_turno($_POST["turno_nom"]);     
+            if(empty($_POST["turno_id"])){       
+                $turno->insert_turno($_POST["turno_nom"],$_POST["hora_inicio"],$_POST["hora_fin"]);     
             }
             else {
-                $turno->update_turno($_POST["turno_id"],$_POST["turno_nom"]);
+                $turno->update_turno($_POST["turno_id"],$_POST["turno_nom"],$_POST["hora_inicio"],$_POST["hora_fin"]);
             }
         break;
 
@@ -33,6 +33,8 @@
                 $sub_array = array();
                 $sub_array[] = $row["turno_id"];
                 $sub_array[] = $row["turno_nom"];
+                $sub_array[] = $row["hora_inicio"];
+                $sub_array[] = $row["hora_fin"];
                 $sub_array[] = '<button type="button" onClick="editar('.$row["turno_id"].');"  id="'.$row["turno_id"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
                 $sub_array[] = '<button type="button" onClick="eliminar('.$row["turno_id"].');"  id="'.$row["turno_id"].'" class="btn btn-inline btn-danger btn-sm ladda-button">Eliminar</button>';
                 $data[] = $sub_array;
@@ -57,6 +59,8 @@
                 {
                     $output["turno_id"] = $row["turno_id"];
                     $output["turno_nom"] = $row["turno_nom"];
+                    $output["hora_inicio"] = $row["hora_inicio"];
+                    $output["hora_fin"] = $row["hora_fin"];
                 }
                 echo json_encode($output);
             }   

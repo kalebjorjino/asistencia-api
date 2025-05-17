@@ -33,10 +33,9 @@ switch($_GET["op"]){
     case "registrarAsistencia":
         $dni = isset($_POST['dni']) ? $_POST['dni'] : null;
         $ubicacion = isset($_POST['ubicacion']) ? $_POST['ubicacion'] : null;
-        $local_id = isset($_POST['local_id']) ? $_POST['local_id'] : null;
         $foto = null;
 
-        if ($dni === null || $ubicacion === null || $local_id === null) {
+        if ($dni === null || $ubicacion === null ) {
             echo json_encode(array("error" => "El DNI, la ubicación y el local son requeridos."));
             return;
         }
@@ -85,7 +84,7 @@ switch($_GET["op"]){
             }
         } else {
             // No tiene entrada activa hoy, registrar entrada
-            $asistenciaId = $asistencia->crearAsistencia($empleado["idEmpleado"], $local_id, $ubicacion, $foto);
+            $asistenciaId = $asistencia->crearAsistencia($empleado["idEmpleado"], $ubicacion, $foto);
             $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
             echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $asistenciaRegistrada['horaEntrada']));
         }

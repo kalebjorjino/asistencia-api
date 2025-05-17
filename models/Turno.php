@@ -36,7 +36,7 @@
         public function insert_turno($turno_nom,$hora_inicio,$hora_fin){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="INSERT INTO tm_turno (turno_id, turno_nom, hora_inicio, hora_fin, fech_crea, est) VALUES (NULL,?,?,?,now(),'1');";
+            $sql="INSERT INTO tm_turno (turno_id, turno_nom, hora_inicio, hora_fin, est) VALUES (NULL,?,?,?,'1');";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $turno_nom);
             $sql->bindValue(2, $hora_inicio);
