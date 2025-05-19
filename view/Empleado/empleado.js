@@ -106,7 +106,6 @@ function editar(id){
         $('#dni').val(data.dni);
         $('#nombre').val(data.nombre);
         $('#profesion').val(data.profesion);
-        $('#turno_nom').val(data.turno_nom);
     }); 
 
     $('#modalEmpleado').modal('show');

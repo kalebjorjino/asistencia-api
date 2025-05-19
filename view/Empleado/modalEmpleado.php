@@ -22,12 +22,7 @@
                         <label class="form-label" for="profesion">Profesion</label>
                         <input type="text" class="form-control" id="profesion" name="profesion" placeholder="Ingrese Profesion" required>
                     </div>
-                    
-							<fieldset class="form-group">
-								<label class="form-label semibold" for="turno_id">Turno</label>
-								<select class="form-control" id="turno_id" name="turno_id"  required>
-								</select>
-							</fieldset>
+                
 						
                 </div>
                 <div class="modal-footer">

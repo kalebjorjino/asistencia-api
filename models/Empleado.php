@@ -7,14 +7,13 @@
             $sql="SELECT
                 a.id_as AS idAsistencia,
                 e.nombre AS nombreEmpleado,
-                t.turno_nom AS turnoAsistencia,
                 a.hora_entrada AS horaEntrada,
                 a.hora_salida AS horaSalida,
                 a.ubicacion AS ubicacionAsistencia,
                 a.foto AS fotoAsistencia
                 FROM asistencia a
                 INNER JOIN empleados e ON a.id_empleado = e.id
-                INNER JOIN tm_turno t ON a.turno_id = t.turno_id;";
+                ;";
             $sql=$conectar->prepare($sql);
             $sql->execute();
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
@@ -40,35 +39,32 @@
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
         }
 
-         public function insert_empleado($dni,$nombre,$profesion,$turno_id){
+         public function insert_empleado($dni,$nombre,$profesion){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="INSERT INTO empleados (id, dni, nombre, profesion, turno_id, fecha_registro, est) VALUES (NULL,?,?,?,?,now(),'1');";
+            $sql="INSERT INTO empleados (id, dni, nombre, profesion,  fecha_registro, est) VALUES (NULL,?,?,?,now(),'1');";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $dni);
             $sql->bindValue(2, $nombre);
             $sql->bindValue(3, $profesion);
-            $sql->bindValue(4, $turno_id);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
 
-        public function update_empleado($id,$dni,$nombre,$profesion,$turno_id){
+        public function update_empleado($id,$dni,$nombre,$profesion){
             $conectar= parent::conexion();
             parent::set_names();
             $sql="UPDATE empleados set
                 dni = ?,
                 nombre = ?,
-                profesion = ?,
-                turno_id = ?
+                profesion = ?
                 WHERE
                 id = ?";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $dni);
             $sql->bindValue(2, $nombre);
             $sql->bindValue(3, $profesion);
-            $sql->bindValue(4, $turno_id);
-            $sql->bindValue(5, $id);
+            $sql->bindValue(4, $id);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
@@ -94,11 +90,9 @@
             dni, 
             nombre, 
             profesion, 
-            t.turno_nom,
             fecha_registro
         FROM 
             empleados e
-            INNER JOIN tm_turno t ON e.turno_id = t.turno_id
         WHERE
             e.est = 1;";
             $sql=$conectar->prepare($sql);
@@ -114,11 +108,9 @@
             dni, 
             nombre, 
             profesion, 
-            t.turno_nom,
             fecha_registro
                 FROM 
                 empleados e
-                INNER JOIN tm_turno t ON e.turno_id = t.turno_id
                 WHERE
                 e.est = 1
                 AND e.id = ?";

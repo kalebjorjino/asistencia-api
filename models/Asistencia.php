@@ -54,13 +54,14 @@
             $conectar=parent::conexion();
             parent::set_names();
             $sql="INSERT INTO asistencia
-            (
-                id_empleado,
-                ubicacion,
-                foto,
-                hora_entrada
-            )
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+    (
+        id_empleado,
+        ubicacion,
+        foto,
+        hora_entrada,
+        est
+    )
+    VALUES (?, ?, ?, CURRENT_TIMESTAMP, 1)";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $usuarioId);
             $sql->bindValue(2, $ubicacion);

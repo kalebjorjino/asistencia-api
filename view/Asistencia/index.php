@@ -39,7 +39,6 @@
 							
                                                 <th class="text-center" style="width: 5%;">ID</th>
                                                 <th class="text-center" style="width: 5%;">Empleado</th>
-												<th class="text-center" style="width: 5%;">Turno</th>
                                                 <th class="text-center" style="width: 5%;">Entrada</th>
                                                 <th class="text-center" style="width: 5%;">Salida</th>
                                                 <th class="text-center" style="width: 5%;">Ubicación</th>

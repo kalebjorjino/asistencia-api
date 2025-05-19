@@ -42,7 +42,6 @@
                                                 <th class="text-center" style="width: 5%;">DNI</th>
                                                 <th class="text-center" style="width: 5%;">Nombre</th>
                                                 <th class="text-center" style="width: 5%;">Profesion</th>
-												<th class="text-center" style="width: 5%;">Turno</th>
                                                 <th class="text-center" style="width: 5%;">Fecha Registro</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>

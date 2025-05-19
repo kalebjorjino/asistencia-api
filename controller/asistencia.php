@@ -30,64 +30,67 @@ switch($_GET["op"]){
         }
     break;
 
-    case "registrarAsistencia":
-        $dni = isset($_POST['dni']) ? $_POST['dni'] : null;
-        $ubicacion = isset($_POST['ubicacion']) ? $_POST['ubicacion'] : null;
-        $foto = null;
+   case "registrarAsistencia":
+    $dni = $_POST['dni'] ?? null;
+    $ubicacion = $_POST['ubicacion'] ?? null;
+    $foto = null;
 
-        if ($dni === null || $ubicacion === null ) {
-            echo json_encode(array("error" => "El DNI, la ubicación y el local son requeridos."));
-            return;
-        }
+    if ($dni === null || $ubicacion === null) {
+        echo json_encode(array("error" => "El DNI y la ubicación son requeridos."));
+        return;
+    }
 
-        $empleado = $asistencia->obtenerEmpleadoPorDNI($dni);
+    $empleado = $asistencia->obtenerEmpleadoPorDNI($dni);
 
-        if (!$empleado) {
-            http_response_code(404);
-            echo json_encode(array("error" => "Empleado con DNI {$dni} no encontrado."));
-            return;
-        }
+    if (!$empleado) {
+        http_response_code(404);
+        echo json_encode(array("error" => "Empleado con DNI {$dni} no encontrado."));
+        return;
+    }
 
-        $tieneEntradaActivaHoy = $asistencia->tieneEntradaHoy($empleado["idEmpleado"]);
-        $tieneSalidaPendienteAyer = $asistencia->tieneEntradaActiva($empleado["idEmpleado"]); // Verifica si hay alguna entrada activa (de ayer o hoy)
+    // Manejo de foto
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $nombreArchivo = date("YmdHis") . "_" . basename($_FILES['foto']['name']);
+        $rutaDestino = '../public/uploads/' . $nombreArchivo;
 
-        // **Photo upload logic moved after successful employee validation**
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $nombreArchivo = date("YmdHis") . "_" . basename($_FILES['foto']['name']);
-            $rutaDestino = '../public/uploads/' . $nombreArchivo;
-
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
-                $foto = 'uploads/' . $nombreArchivo;
-            } else {
-                echo json_encode(array("error" => "Error al guardar la foto."));
-                return;
-            }
-        } elseif (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
-            // Handle other upload errors if needed
-            echo json_encode(array("error" => "Error en la carga de la foto. Código: " . $_FILES['foto']['error']));
-            return;
-        }
-
-        if ($tieneSalidaPendienteAyer && !$tieneEntradaActivaHoy) {
-            // Tiene una entrada pendiente (posiblemente de ayer) y no ha marcado entrada hoy, registrar entrada
-            $asistenciaId = $asistencia->crearAsistencia($empleado["idEmpleado"], $local_id, $ubicacion, $foto);
-            $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
-            echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $asistenciaRegistrada['horaEntrada']));
-        } elseif ($tieneEntradaActivaHoy) {
-            // Ya marcó entrada hoy, intentar registrar salida
-            $affectedRows = $asistencia->registrarSalida($empleado["idEmpleado"]);
-            if ($affectedRows > 0) {
-                $asistenciaActualizada = $asistencia->obtenerAsistenciaActivaPorEmpleado($empleado["idEmpleado"]);
-                echo json_encode(array("message" => "Salida registrada correctamente", "tipo" => "salida", "hora_salida" => $asistenciaActualizada['horaSalida']));
-            } else {
-                echo json_encode(array("message" => "No se encontró un registro de entrada activo para registrar la salida."));
-            }
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
+            $foto = 'uploads/' . $nombreArchivo;
         } else {
-            // No tiene entrada activa hoy, registrar entrada
-            $asistenciaId = $asistencia->crearAsistencia($empleado["idEmpleado"], $ubicacion, $foto);
-            $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
-            echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $asistenciaRegistrada['horaEntrada']));
+            echo json_encode(array("error" => "Error al guardar la foto."));
+            return;
         }
-    break;
+    } elseif (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
+        echo json_encode(array("error" => "Error en la carga de la foto. Código: " . $_FILES['foto']['error']));
+        return;
+    }
+
+    $empleadoId = $empleado["idEmpleado"];
+    $tieneEntradaActivaHoy = $asistencia->tieneEntradaHoy($empleadoId);
+    $tieneSalidaPendiente = $asistencia->tieneEntradaActiva($empleadoId);
+
+    if ($tieneSalidaPendiente && !$tieneEntradaActivaHoy) {
+        $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
+        $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
+        $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
+
+        echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
+    } elseif ($tieneEntradaActivaHoy) {
+        $affectedRows = $asistencia->registrarSalida($empleadoId);
+        if ($affectedRows > 0) {
+            $asistenciaActualizada = $asistencia->obtenerAsistenciaActivaPorEmpleado($empleadoId);
+            $horaSalida = $asistenciaActualizada['hora_salida'] ?? null;
+
+            echo json_encode(array("message" => "Salida registrada correctamente", "tipo" => "salida", "hora_salida" => $horaSalida));
+        } else {
+            echo json_encode(array("message" => "No se encontró un registro de entrada activo para registrar la salida."));
+        }
+    } else {
+        $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
+        $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
+        $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
+
+        echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
+    }
+break;
 }
 ?>

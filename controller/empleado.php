@@ -7,10 +7,10 @@
 
          case "guardaryeditar":
             if(empty($_POST["id"])){       
-                $empleado->insert_empleado($_POST["dni"],$_POST["nombre"],$_POST["profesion"],$_POST["turno_id"]);     
+                $empleado->insert_empleado($_POST["dni"],$_POST["nombre"],$_POST["profesion"]);     
             }
             else {
-                $empleado->update_empleado($_POST["id"],$_POST["dni"],$_POST["nombre"],$_POST["profesion"],$_POST["turno_id"]);
+                $empleado->update_empleado($_POST["id"],$_POST["dni"],$_POST["nombre"],$_POST["profesion"]);
             }
         break;
 
@@ -21,7 +21,6 @@
                 $sub_array = array();
                 $sub_array[] = $row["idAsistencia"];
                 $sub_array[] = $row["nombreEmpleado"];
-                $sub_array[] = $row["turnoAsistencia"];
                 $sub_array[] = '<button class="btn btn-success btn-sm rounded">' .$row["horaEntrada"] . '</button>';
                 $sub_array[] = '<button class="btn btn-danger btn-sm rounded">' .$row["horaSalida"] . '</button>';
                 if ($row["ubicacionAsistencia"] == "Ubicación no disponible") {
@@ -51,7 +50,6 @@
                 $sub_array[] = $row["dni"];
                 $sub_array[] = $row["nombre"];
                 $sub_array[] = $row["profesion"];
-                $sub_array[] = $row["turno_nom"];
                 $sub_array[] = $row["fecha_registro"];
                 $sub_array[] = '<button type="button" onClick="editar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
                 $sub_array[] = '<button type="button" onClick="eliminar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-danger btn-sm ladda-button">Eliminar</button>';
@@ -79,7 +77,6 @@
                     $output["dni"] = $row["dni"];
                     $output["nombre"] = $row["nombre"];
                     $output["profesion"] = $row["profesion"];
-                    $output["turno_nom"] = $row["turno_nom"];
                 }
                 echo json_encode($output);
             }   
