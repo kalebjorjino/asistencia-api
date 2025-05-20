@@ -141,15 +141,24 @@ $horaSalida = new DateTime('now', $zonaHoraria);
     $segundos = $segundosTrabajados % 60;
     $horasTrabajadas = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
 
-    // 5. Calcular tardanza
-    $tardanza = '00:00:00';
-    if ($horaEntrada > $horaEntradaEsperada) {
-        $segundosTardanza = $horaEntrada->getTimestamp() - $horaEntradaEsperada->getTimestamp();
-        $h = floor($segundosTardanza / 3600);
-        $m = floor(($segundosTardanza % 3600) / 60);
-        $s = $segundosTardanza % 60;
-        $tardanza = sprintf('%02d:%02d:%02d', $h, $m, $s);
-    }
+    // 5. Calcular tardanza con tolerancia
+$tardanza = '00:00:00';
+$toleranciaMin = isset($horario['tolerancia_minutos']) ? intval($horario['tolerancia_minutos']) : 0;
+
+// Hora de entrada esperada + tolerancia
+$horaEntradaEsperadaConTolerancia = clone $horaEntradaEsperada;
+$horaEntradaEsperadaConTolerancia->modify("+{$toleranciaMin} minutes");
+
+if ($horaEntrada > $horaEntradaEsperadaConTolerancia) {
+    $segundosTardanza = $horaEntrada->getTimestamp() - $horaEntradaEsperadaConTolerancia->getTimestamp();
+    $h = floor($segundosTardanza / 3600);
+    $m = floor(($segundosTardanza % 3600) / 60);
+    $s = $segundosTardanza % 60;
+    $tardanza = sprintf('%02d:%02d:%02d', $h, $m, $s);
+} else {
+    $tardanza = '00:00:00'; // Dentro de tolerancia, no hay tardanza
+}
+
 
     // 6. Calcular horas extra (si aplica)
     $horasExtras = '00:00:00';
