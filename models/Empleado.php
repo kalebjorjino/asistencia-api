@@ -19,6 +19,8 @@
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
         }
 
+
+
         public function get_asistencia_x_id($id_as){
             $conectar=parent::conexion();
             parent::set_names();

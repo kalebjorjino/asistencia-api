@@ -14,7 +14,7 @@
             }
         break;
 
-        case "listar":
+         case "listar":
             $datos=$empleado->get_asistencia();
             $data= Array();
             foreach($datos as $row){
@@ -40,6 +40,8 @@
                 "aaData"=>$data);
             echo json_encode($results);
         break;
+
+        
 
         case "listar_empleados":
             $datos=$empleado->get_empleado();
