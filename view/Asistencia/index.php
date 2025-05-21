@@ -43,6 +43,11 @@
                                                 <th class="text-center" style="width: 5%;">Salida</th>
                                                 <th class="text-center" style="width: 5%;">Ubicación</th>
                                                 <th class="text-center" style="width: 5%;">Foto</th>
+												<th class="text-center" style="width: 5%;">Tardanzas</th>
+												<th class="text-center" style="width: 5%;">Horas Trabajadas</th>
+												<th class="text-center" style="width: 5%;">Horas_Extras</th>
+												
+												<th class="text-center" style="width: 5%;">Estado</th>
 						</tr>
 					</thead>
 					<tbody>

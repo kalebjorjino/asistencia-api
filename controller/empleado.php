@@ -13,33 +13,49 @@
                 $empleado->update_empleado($_POST["id"],$_POST["dni"],$_POST["nombre"],$_POST["profesion"]);
             }
         break;
+case "listar":
+    $datos = $empleado->get_asistencia();
+    $data = array();
 
-         case "listar":
-            $datos=$empleado->get_asistencia();
-            $data= Array();
-            foreach($datos as $row){
-                $sub_array = array();
-                $sub_array[] = $row["idAsistencia"];
-                $sub_array[] = $row["nombreEmpleado"];
-                $sub_array[] = '<button class="btn btn-success btn-sm rounded">' .$row["horaEntrada"] . '</button>';
-                $sub_array[] = '<button class="btn btn-danger btn-sm rounded">' .$row["horaSalida"] . '</button>';
-                if ($row["ubicacionAsistencia"] == "Ubicación no disponible") {
-                    $sub_array[] = '<span class="text-danger font-weight-bold">' . $row["ubicacionAsistencia"] . '</span>';
-                 } else {
-                    $sub_array[] = '<button class="btn btn-info btn-sm rounded">' .$row["ubicacionAsistencia"] . '</button>';
+    foreach ($datos as $row) {
+        $sub_array = array();
 
-                 }
-                $sub_array[] = '<img src="../../public/' . $row["fotoAsistencia"] . '" class="img-thumbnail" width="80" height="80" alt="Foto de Asistencia">';
-                $data[] = $sub_array;
-            }
+        $sub_array[] = $row["idAsistencia"];
+        $sub_array[] = $row["nombreEmpleado"];
+        $sub_array[] = $row["horaEntrada"];
+        $sub_array[] = $row["horaSalida"];
 
-            $results = array(
-                "sEcho"=>1,
-                "iTotalRecords"=>count($data),
-                "iTotalDisplayRecords"=>count($data),
-                "aaData"=>$data);
-            echo json_encode($results);
-        break;
+        if ($row["ubicacionAsistencia"] == "Ubicación no disponible") {
+            $sub_array[] = '<span class="text-danger font-weight-bold">' . $row["ubicacionAsistencia"] . '</span>';
+        } else {
+            $sub_array[] = '<button class="btn btn-info btn-sm rounded">' . $row["ubicacionAsistencia"] . '</button>';
+        }
+
+        $sub_array[] = '<img src="../../public/' . $row["fotoAsistencia"] . '" class="img-thumbnail" width="80" height="80" alt="Foto de Asistencia">';
+        $sub_array[] = $row["tardanza"];
+        $sub_array[] = $row["horas_trabajadas"];
+        $sub_array[] = $row["horas_extras"];
+
+        // Mostrar badge según tardanza: si es diferente de "00:00:00" llegó tarde, si no, puntualidad
+        if ($row["tardanza"] !== "00:00:00") {
+            $sub_array[] = '<span class="badge badge-danger">Llegó tarde</span>';
+        } else {
+            $sub_array[] = '<span class="badge badge-success">Puntualidad</span>';
+        }
+
+        $data[] = $sub_array;
+    }
+
+    $results = array(
+        "sEcho" => 1,
+        "iTotalRecords" => count($data),
+        "iTotalDisplayRecords" => count($data),
+        "aaData" => $data
+    );
+    echo json_encode($results);
+    break;
+
+
 
         
 

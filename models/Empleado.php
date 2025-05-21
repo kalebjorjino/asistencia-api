@@ -9,6 +9,9 @@
                 e.nombre AS nombreEmpleado,
                 a.hora_entrada AS horaEntrada,
                 a.hora_salida AS horaSalida,
+                a.tardanza AS tardanza,
+                a.horas_extras AS horas_extras,
+                a.horas_trabajadas AS horas_trabajadas,
                 a.ubicacion AS ubicacionAsistencia,
                 a.foto AS fotoAsistencia
                 FROM asistencia a

@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <?php require_once("../MainHead/head.php");?>
-	<title>Turnos</title>
+	<title>Horarios</title>
 </head>
 <body class="with-side-menu">
 
@@ -22,10 +22,10 @@
 				<div class="tbl">
 					<div class="tbl-row">
 						<div class="tbl-cell">
-							<h3>Turnos</h3>
+							<h3>Horarios</h3>
 							<ol class="breadcrumb breadcrumb-simple">
 								<li><a href="#">Home</a></li>
-								<li class="active">Turnos</li>
+								<li class="active">Horarios</li>
 							</ol>
 						</div>
 					</div>
@@ -38,9 +38,10 @@
 					<thead>
 						<tr>
 							                    <th class="text-center" style="width: 5%;">ID</th>
-                                                <th class="text-center" style="width: 5%;">Turno</th>
+                                                <th class="text-center" style="width: 5%;">Empleado</th>
                                                 <th class="text-center" style="width: 5%;">Hora Inicio</th>
                                                 <th class="text-center" style="width: 5%;">Hora Fin</th>
+												<th class="text-center" style="width: 5%;">Tolerancia</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 
@@ -59,11 +60,11 @@
     <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
 
-    <?php require_once("modalTurno.php");?>
+    <?php require_once("modalHorario.php");?>
 
 	<?php require_once("../MainJs/index.php");?>
 	
-	<script type="text/javascript" src="turno.js"></script>
+	<script type="text/javascript" src="horario.js"></script>
 
 
 </body>

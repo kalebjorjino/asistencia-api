@@ -9,8 +9,8 @@
                     <input type="hidden" id="turno_id" name="turno_id">
 
                     <div class="form-group">
-                        <label class="form-label" for="turno_nom">DNI</label>
-                        <input type="text" class="form-control" id="turno_nom" name="turno_nom" placeholder="Ingrese Turno" required>
+                        <label class="form-label" for="id_empleado">Empleado</label>
+                        <input type="text" class="form-control" id="id_empleado" name="id_empleado" placeholder="Ingrese Empleado" required>
                     </div>
 
                     <div class="form-group">

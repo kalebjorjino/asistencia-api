@@ -9,6 +9,8 @@
                 e.nombre AS nombreEmpleado,
                 a.hora_entrada AS horaEntrada,
                 a.hora_salida AS horaSalida,
+                a.tardanza AS tardanza,
+                a.horas_trabajadas AS horas_trabajadas,
                 a.ubicacion AS ubicacionAsistencia,
                 a.foto AS fotoAsistencia
                 FROM asistencia a
@@ -50,25 +52,71 @@
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public function crearAsistencia($usuarioId, $ubicacion, $foto){
-            $conectar=parent::conexion();
-            parent::set_names();
-            $sql="INSERT INTO asistencia
-    (
-        id_empleado,
-        ubicacion,
-        foto,
-        hora_entrada,
-        est
-    )
-    VALUES (?, ?, ?, CURRENT_TIMESTAMP, 1)";
-            $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $usuarioId);
-            $sql->bindValue(2, $ubicacion);
-            $sql->bindValue(3, $foto);
-            $sql->execute();
-            return $conectar->lastInsertId();
+      public function crearAsistencia($usuarioId, $ubicacion, $foto){
+    $conectar = parent::conexion();
+    parent::set_names();
+
+    $zonaHoraria = new DateTimeZone('America/Lima');
+    $horaEntrada = new DateTime('now', $zonaHoraria);
+    $horaEntradaStr = $horaEntrada->format('Y-m-d H:i:s');
+    $fechaActual = $horaEntrada->format('Y-m-d');
+
+    // Buscar horario vigente del empleado
+    $sqlHorario = "SELECT hora_inicio, tolerancia_minutos 
+                   FROM horarios 
+                   WHERE id_empleado = ? 
+                     AND fecha_inicio <= ? 
+                     AND (fecha_fin IS NULL OR fecha_fin >= ?) 
+                     AND est = 1 
+                   ORDER BY fecha_inicio DESC 
+                   LIMIT 1";
+    $stmtHorario = $conectar->prepare($sqlHorario);
+    $stmtHorario->bindValue(1, $usuarioId);
+    $stmtHorario->bindValue(2, $fechaActual);
+    $stmtHorario->bindValue(3, $fechaActual);
+    $stmtHorario->execute();
+    $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
+
+    $tardanza = "00:00:00";  // Por defecto no hay tardanza
+
+    if ($horario) {
+        $horaInicio = new DateTime($fechaActual . ' ' . $horario['hora_inicio'], $zonaHoraria);
+        $toleranciaMin = intval($horario['tolerancia_minutos']);
+        $horaLimite = clone $horaInicio;
+        $horaLimite->modify("+{$toleranciaMin} minutes");
+
+        // Si hora entrada es mayor que horaLimite, hay tardanza
+        if ($horaEntrada > $horaLimite) {
+            $segundosTardanza = $horaEntrada->getTimestamp() - $horaLimite->getTimestamp();
+            $h = floor($segundosTardanza / 3600);
+            $m = floor(($segundosTardanza % 3600) / 60);
+            $s = $segundosTardanza % 60;
+            $tardanza = sprintf('%02d:%02d:%02d', $h, $m, $s);
         }
+        // Si llega antes o en límite, tardanza queda en "00:00:00"
+    }
+
+    // Insertar siempre con tardanza calculada
+    $sql = "INSERT INTO asistencia (
+                id_empleado,
+                ubicacion,
+                foto,
+                hora_entrada,
+                tardanza,
+                est
+            ) VALUES (?, ?, ?, ?, ?, 1)";
+    $stmt = $conectar->prepare($sql);
+    $stmt->bindValue(1, $usuarioId);
+    $stmt->bindValue(2, $ubicacion);
+    $stmt->bindValue(3, $foto);
+    $stmt->bindValue(4, $horaEntradaStr);
+    $stmt->bindValue(5, $tardanza);
+
+    $stmt->execute();
+    return $conectar->lastInsertId();
+}
+
+
 
         public function tieneEntradaActiva($empleadoId){
             $conectar=parent::conexion();
@@ -126,41 +174,21 @@
         throw new Exception("No se encontró horario vigente para el empleado $empleadoId en la fecha $fechaAsistencia.");
     }
 
-   $zonaHoraria = new DateTimeZone('America/Lima'); // O la que uses
+    $zonaHoraria = new DateTimeZone('America/Lima');
+    $horaEntradaEsperada = new DateTime("$fechaAsistencia " . $horario['hora_inicio'], $zonaHoraria);
+    $horaSalidaEsperada  = new DateTime("$fechaAsistencia " . $horario['hora_fin'], $zonaHoraria);
 
-$horaEntradaEsperada = new DateTime("$fechaAsistencia " . $horario['hora_inicio'], $zonaHoraria);
-$horaSalidaEsperada  = new DateTime("$fechaAsistencia " . $horario['hora_fin'], $zonaHoraria);
+    // 3. Calcular horas trabajadas
+    $horaEntrada = new DateTime($asistencia['hora_entrada'], $zonaHoraria);
+    $horaSalida = new DateTime('now', $zonaHoraria);
 
-$horaEntrada = new DateTime($asistencia['hora_entrada'], $zonaHoraria);
-$horaSalida = new DateTime('now', $zonaHoraria);
-
-    // 4. Calcular horas trabajadas
     $segundosTrabajados = $horaSalida->getTimestamp() - $horaEntrada->getTimestamp();
     $horas = floor($segundosTrabajados / 3600);
     $minutos = floor(($segundosTrabajados % 3600) / 60);
     $segundos = $segundosTrabajados % 60;
     $horasTrabajadas = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
 
-    // 5. Calcular tardanza con tolerancia
-$tardanza = '00:00:00';
-$toleranciaMin = isset($horario['tolerancia_minutos']) ? intval($horario['tolerancia_minutos']) : 0;
-
-// Hora de entrada esperada + tolerancia
-$horaEntradaEsperadaConTolerancia = clone $horaEntradaEsperada;
-$horaEntradaEsperadaConTolerancia->modify("+{$toleranciaMin} minutes");
-
-if ($horaEntrada > $horaEntradaEsperadaConTolerancia) {
-    $segundosTardanza = $horaEntrada->getTimestamp() - $horaEntradaEsperadaConTolerancia->getTimestamp();
-    $h = floor($segundosTardanza / 3600);
-    $m = floor(($segundosTardanza % 3600) / 60);
-    $s = $segundosTardanza % 60;
-    $tardanza = sprintf('%02d:%02d:%02d', $h, $m, $s);
-} else {
-    $tardanza = '00:00:00'; // Dentro de tolerancia, no hay tardanza
-}
-
-
-    // 6. Calcular horas extra (si aplica)
+    // 4. Calcular horas extra (si aplica)
     $horasExtras = '00:00:00';
     if ($horaSalida > $horaSalidaEsperada && $horaEntrada <= $horaSalidaEsperada) {
         $segundosExtra = $horaSalida->getTimestamp() - $horaSalidaEsperada->getTimestamp();
@@ -170,15 +198,15 @@ if ($horaEntrada > $horaEntradaEsperadaConTolerancia) {
         $horasExtras = sprintf('%02d:%02d:%02d', $h, $m, $s);
     }
 
-    // 7. Actualizar asistencia
+    // 5. Actualizar asistencia
     $sqlUpdate = "UPDATE asistencia SET 
                     hora_salida = CURRENT_TIMESTAMP, 
                     horas_trabajadas = ?, 
-                    tardanza = ? 
+                    horas_extras = ?
                   WHERE id_as = ?";
     $stmtUpdate = $conectar->prepare($sqlUpdate);
     $stmtUpdate->bindValue(1, $horasTrabajadas);
-    $stmtUpdate->bindValue(2, $tardanza);
+    $stmtUpdate->bindValue(2, $horasExtras);
     $stmtUpdate->bindValue(3, $idAsistencia);
     $stmtUpdate->execute();
 

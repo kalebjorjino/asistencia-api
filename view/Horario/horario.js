@@ -1,28 +1,28 @@
 var tabla;
 
 function init(){
-    $("#turno_form").on("submit",function(e){
+    $("#horario_form").on("submit",function(e){
         guardaryeditar(e);	
     });
 }
 
 function guardaryeditar(e){
     e.preventDefault();
-	var formData = new FormData($("#turno_form")[0]);
+	var formData = new FormData($("#horario_form")[0]);
     $.ajax({
-        url: "../../controller/turno.php?op=guardaryeditar",
+        url: "../../controller/horario.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
         success: function(datos){    
             console.log(datos);
-            $('#turno_form')[0].reset();
-            $("#modalTurno").modal('hide');
+            $('#horario_form')[0].reset();
+            $("#modalHorario").modal('hide');
             $('#datatable-buttons').DataTable().ajax.reload();
 
             swal({
-                title: "Turno!",
+                title: "Horario!",
                 text: "Completado.",
                 type: "success",
                 confirmButtonClass: "btn-success"
@@ -49,7 +49,7 @@ $(document).ready(function(){
                 'pdfHtml5'
                 ],
         "ajax":{
-            url: '../../controller/turno.php?op=listar',
+            url: '../../controller/horario.php?op=listar',
             type : "post",
             dataType : "json",						
             error: function(e){
@@ -91,23 +91,24 @@ $(document).ready(function(){
   
 });
 
-function editar(turno_id){
+function editar(id){
     $('#mdltitulo').html('Editar Registro');
 
-    $.post("../../controller/turno.php?op=mostrar", {turno_id : turno_id}, function (data) {
+    $.post("../../controller/turno.php?op=mostrar", {id : id}, function (data) {
         data = JSON.parse(data);
-        $('#turno_id').val(data.turno_id);
-        $('#turno_nom').val(data.turno_nom);
+        $('#id').val(data.id);
+        $('#id_empleado').val(data.id_empleado);
         $('#hora_inicio').val(data.hora_inicio);
         $('#hora_fin').val(data.hora_fin);
+        $('#tolerancia_minutos').val(data.tolerancia_minutos);
     }); 
 
     $('#modalTurno').modal('show');
 }
 
-function eliminar(turno_id){
+function eliminar(id){
     swal({
-        title: "Turno",
+        title: "Horario",
         text: "Esta seguro de Eliminar el registro?",
         type: "error",
         showCancelButton: true,
@@ -120,14 +121,14 @@ function eliminar(turno_id){
     },
     function(isConfirm) {
         if (isConfirm) {
-            $.post("../../controller/turno.php?op=eliminar", {turno_id : turno_id}, function (data) {
+            $.post("../../controller/horario.php?op=eliminar", {id : id}, function (data) {
 
             }); 
 
             $('#datatable-buttons').DataTable().ajax.reload();	
 
             swal({
-                title: "Turno!",
+                title: "Horario!",
                 text: "Registro Eliminado.",
                 type: "success",
                 confirmButtonClass: "btn-success"

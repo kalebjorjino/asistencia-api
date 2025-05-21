@@ -31,9 +31,9 @@
                         </a>
                     </li>
                      <li class="green with-sub opened">
-                        <a href="..\Turno\">
+                        <a href="..\Horario\">
                             <span class="glyphicon glyphicon-list-alt"></span>
-                            <span class="lbl">Turnos</span>
+                            <span class="lbl">Horarios</span>
                         </a>
                     </li>
                     <li class="blue-dirty">
