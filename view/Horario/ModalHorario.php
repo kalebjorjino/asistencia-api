@@ -1,16 +1,17 @@
-<div id="modalTurno" class="modal fade bd-example-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="modalHorario" class="modal fade bd-example-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title text-white" id="mdltitulo"></h4>
             </div>
-            <form method="post" id="turno_form">
+            <form method="post" id="horario_form">
                 <div class="modal-body">
-                    <input type="hidden" id="turno_id" name="turno_id">
+                    <input type="hidden" id="id" name="id">
 
                     <div class="form-group">
                         <label class="form-label" for="id_empleado">Empleado</label>
-                        <input type="text" class="form-control" id="id_empleado" name="id_empleado" placeholder="Ingrese Empleado" required>
+                         <select id="id_empleado" name="id_empleado" class="form-control" required="required">
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -21,6 +22,11 @@
                     <div class="form-group">
                         <label class="form-label" for="hora_fin">Hora Final</label>
                         <input type="time" class="form-control" id="hora_fin" name="hora_fin"  required>
+                    </div>
+
+                     <div class="form-group">
+                        <label class="form-label" for="hora_fin">Tolerancia/Minutos</label>
+                        <input type="time" class="form-control" id="tolerancia_minutos" name="tolerancia_minutos"  required>
                     </div>
                 </div>
                 <div class="modal-footer">

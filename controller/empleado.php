@@ -5,6 +5,19 @@
 
     switch($_GET["op"]){
 
+        case "combo":
+            $datos = $empleado->get_empleado();
+            if(is_array($datos)==true and count($datos)>0){
+                echo "<option value=''>Selecciona</option>"; // Opción inicial por defecto
+                $html;
+                foreach($datos as $row)
+                {
+                    $html.= "<option value='".$row['id']."'>".$row['nombre']."</option>";
+                }
+                echo $html;
+            }
+        break;
+
          case "guardaryeditar":
             if(empty($_POST["id"])){       
                 $empleado->insert_empleado($_POST["dni"],$_POST["nombre"],$_POST["profesion"]);     
@@ -28,7 +41,7 @@ case "listar":
         if ($row["ubicacionAsistencia"] == "Ubicación no disponible") {
             $sub_array[] = '<span class="text-danger font-weight-bold">' . $row["ubicacionAsistencia"] . '</span>';
         } else {
-            $sub_array[] = '<button class="btn btn-info btn-sm rounded">' . $row["ubicacionAsistencia"] . '</button>';
+            $sub_array[] = $row["ubicacionAsistencia"];
         }
 
         $sub_array[] = '<img src="../../public/' . $row["fotoAsistencia"] . '" class="img-thumbnail" width="80" height="80" alt="Foto de Asistencia">';
@@ -38,9 +51,9 @@ case "listar":
 
         // Mostrar badge según tardanza: si es diferente de "00:00:00" llegó tarde, si no, puntualidad
         if ($row["tardanza"] !== "00:00:00") {
-            $sub_array[] = '<span class="badge badge-danger">Llegó tarde</span>';
+            $sub_array[] = '<button type="button" class="btn btn-inline btn-danger btn-sm ladda-button">Llegó tarde</button>';
         } else {
-            $sub_array[] = '<span class="badge badge-success">Puntualidad</span>';
+            $sub_array[] = '<button type="button" class="btn btn-inline btn-success btn-sm ladda-button">Puntualidad</button>';
         }
 
         $data[] = $sub_array;

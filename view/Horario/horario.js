@@ -88,13 +88,17 @@ $(document).ready(function(){
         }     
     }).DataTable(); 
 
+     $.post("../../controller/empleado.php?op=combo",function(data, status){
+        $('#id_empleado').html(data);
+    });
+
   
 });
 
 function editar(id){
     $('#mdltitulo').html('Editar Registro');
 
-    $.post("../../controller/turno.php?op=mostrar", {id : id}, function (data) {
+    $.post("../../controller/horario.php?op=mostrar", {id : id}, function (data) {
         data = JSON.parse(data);
         $('#id').val(data.id);
         $('#id_empleado').val(data.id_empleado);
@@ -103,7 +107,7 @@ function editar(id){
         $('#tolerancia_minutos').val(data.tolerancia_minutos);
     }); 
 
-    $('#modalTurno').modal('show');
+    $('#modalHorario').modal('show');
 }
 
 function eliminar(id){
@@ -141,8 +145,8 @@ function eliminar(id){
 
 $(document).on("click","#btnnuevo", function(){
     $('#mdltitulo').html('Nuevo Registro');
-    $('#turno_form')[0].reset();
-    $('#modalTurno').modal('show');
+    $('#horario_form')[0].reset();
+    $('#modalHorario').modal('show');
 });
 
 

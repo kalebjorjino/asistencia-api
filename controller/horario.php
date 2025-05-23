@@ -39,18 +39,19 @@
         break;
 
         case "eliminar":
-            $horario->delete_horario($_POST["horario_id"]);
+            $horario->delete_horario($_POST["id"]);
         break;
 
         case "mostrar";
-            $datos=$horario->get_horario_x_id($_POST["horario_id"]);  
+            $datos=$horario->get_horario_x_id($_POST["id"]);  
             if(is_array($datos)==true and count($datos)>0){
                 foreach($datos as $row)
                 {
-                    $output["horario_id"] = $row["horario_id"];
-                    $output["horario_nom"] = $row["horario_nom"];
+                    $output["id"] = $row["id"];
+                    $output["id_empleado"] = $row["id_empleado"];
                     $output["hora_inicio"] = $row["hora_inicio"];
                     $output["hora_fin"] = $row["hora_fin"];
+                    $output["tolerancia_minutos"] = $row["tolerancia_minutos"];
                 }
                 echo json_encode($output);
             }   
