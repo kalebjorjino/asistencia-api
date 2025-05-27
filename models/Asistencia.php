@@ -77,6 +77,12 @@
     $stmtHorario->execute();
     $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
 
+    // NUEVA VERIFICACIÓN: Si no se encuentra horario, lanzar excepción.
+    if (!$horario) {
+        // Usar código 400 para indicar que la solicitud es incorrecta (falta horario)
+        throw new Exception("Empleado no tiene horario registrado para hoy.", 400);
+    }
+
     $tardanza = "00:00:00";  // Por defecto no hay tardanza
 
     if ($horario) {

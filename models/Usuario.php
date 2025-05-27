@@ -13,7 +13,7 @@
                         header("Location:".Conectar::ruta()."login.php?m=2");
                         exit();
                     }else{
-                        $sql = "SELECT * FROM tm_usuario WHERE usu_correo=? and usu_pass=MD5(?) and rol_id=? and est=1";
+                        $sql = "SELECT * FROM tm_usuario WHERE usu_correo=? and usu_pass=? and rol_id=? and est=1";
                         $stmt = $conectar->prepare($sql);
                         $stmt->bindValue(1, $correo);
                         $stmt->bindValue(2, $pass);

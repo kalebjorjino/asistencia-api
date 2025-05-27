@@ -68,28 +68,42 @@ switch($_GET["op"]){
     $tieneEntradaActivaHoy = $asistencia->tieneEntradaHoy($empleadoId);
     $tieneSalidaPendiente = $asistencia->tieneEntradaActiva($empleadoId);
 
-    if ($tieneSalidaPendiente && !$tieneEntradaActivaHoy) {
-        $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
-        $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
-        $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
-
-        echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
-    } elseif ($tieneEntradaActivaHoy) {
-        $affectedRows = $asistencia->registrarSalida($empleadoId);
-        if ($affectedRows > 0) {
-            $asistenciaActualizada = $asistencia->obtenerAsistenciaActivaPorEmpleado($empleadoId);
-            $horaSalida = $asistenciaActualizada['hora_salida'] ?? null;
-
-            echo json_encode(array("message" => "Salida registrada correctamente", "tipo" => "salida", "hora_salida" => $horaSalida));
+    // Envolver la lógica de registro en un try-catch para manejar excepciones (ej. sin horario)
+    try {
+        if ($tieneSalidaPendiente && !$tieneEntradaActivaHoy) {
+            $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
+            $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
+            $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
+            echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
+        } elseif ($tieneEntradaActivaHoy) {
+            $affectedRows = $asistencia->registrarSalida($empleadoId);
+            if ($affectedRows > 0) {
+                $asistenciaActualizada = $asistencia->obtenerAsistenciaActivaPorEmpleado($empleadoId);
+                $horaSalida = $asistenciaActualizada['hora_salida'] ?? null;
+                echo json_encode(array("message" => "Salida registrada correctamente", "tipo" => "salida", "hora_salida" => $horaSalida));
+            } else {
+                // Este caso podría necesitar revisión, quizás devolver un error si no se actualiza
+                http_response_code(500);
+                echo json_encode(array("error" => "No se pudo registrar la salida."));
+            }
         } else {
-            echo json_encode(array("message" => "No se encontró un registro de entrada activo para registrar la salida."));
+            // Primera entrada del día
+            $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
+            $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
+            $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
+            echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
         }
-    } else {
-        $asistenciaId = $asistencia->crearAsistencia($empleadoId, $ubicacion, $foto);
-        $asistenciaRegistrada = $asistencia->obtenerAsistenciaPorId($asistenciaId);
-        $horaEntrada = $asistenciaRegistrada['hora_entrada'] ?? null;
-
-        echo json_encode(array("message" => "Entrada registrada correctamente", "tipo" => "entrada", "hora_entrada" => $horaEntrada));
+    } catch (Exception $e) {
+        // Capturar excepciones específicas o genéricas
+        if ($e->getCode() == 400) { // Código 400 para "Sin Horario"
+            http_response_code(400);
+            echo json_encode(array("error" => $e->getMessage())); // Usar el mensaje de la excepción
+        } else {
+            // Otro tipo de error durante el registro
+            http_response_code(500);
+            error_log("Error en registrarAsistencia: " . $e->getMessage()); // Loguear el error real
+            echo json_encode(array("error" => "Error interno al procesar la asistencia."));
+        }
     }
 break;
 }
