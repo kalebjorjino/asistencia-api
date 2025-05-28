@@ -8,10 +8,10 @@
 
          case "guardaryeditar":
             if(empty($_POST["id"])){       
-                $horario->insert_horario($_POST["id_empleado"],$_POST["hora_inicio"],$_POST["hora_fin"],$_POST["tolerancia_minutos"]);     
+                $horario->insert_horario($_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);     
             }
             else {
-                $horario->update_horario($_POST["id"],$_POST["id_empleado"],$_POST["hora_inicio"],$_POST["hora_fin"],$_POST["tolerancia_minutos"]);
+                $horario->update_horario($_POST["id"],$_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);
             }
         break;
 
@@ -22,9 +22,9 @@
                 $sub_array = array();
                 $sub_array[] = $row["id"];
                 $sub_array[] = $row["empleado"];
-                $sub_array[] = $row["hora_inicio"];
-                $sub_array[] = $row["hora_fin"];
-                $sub_array[] = $row["tolerancia_minutos"];
+                $sub_array[] = $row["nombre"];
+                $sub_array[] = $row["fecha_inicio"];
+                $sub_array[] = $row["fecha_fin"];
                 $sub_array[] = '<button type="button" onClick="editar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
                 $sub_array[] = '<button type="button" onClick="eliminar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-danger btn-sm ladda-button">Eliminar</button>';
                 $data[] = $sub_array;
@@ -49,9 +49,9 @@
                 {
                     $output["id"] = $row["id"];
                     $output["id_empleado"] = $row["id_empleado"];
-                    $output["hora_inicio"] = $row["hora_inicio"];
-                    $output["hora_fin"] = $row["hora_fin"];
-                    $output["tolerancia_minutos"] = $row["tolerancia_minutos"];
+                    $output["id_turno"] = $row["id_turno"];
+                    $output["fecha_inicio"] = $row["fecha_inicio"];
+                    $output["fecha_fin"] = $row["fecha_fin"];
                 }
                 echo json_encode($output);
             }   
