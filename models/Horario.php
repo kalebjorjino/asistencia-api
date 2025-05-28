@@ -5,7 +5,7 @@
             $conectar= parent::conexion();
             parent::set_names();
             $sql="SELECT 
-            horarios.id,
+            horarios.id_horario,
             e.nombre AS empleado,
             t.nombre,
             fecha_inicio,
@@ -19,12 +19,12 @@
             return $resultado=$sql->fetchAll();
         }
 
-        public function get_horario_x_id($id){
+        public function get_horario_x_id($id_horario){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT * FROM horarios WHERE est=1 AND id = ?";
+            $sql="SELECT * FROM horarios WHERE est=1 AND id_horario = ?";
             $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $id);
+            $sql->bindValue(1, $id_horario);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
@@ -32,7 +32,7 @@
         public function insert_horario($id_empleado,$id_turno,$fecha_inicio,$fecha_fin){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="INSERT INTO horarios (id, id_empleado, id_turno, fecha_inicio, fecha_fin, est) VALUES (NULL,?,?,?,?,'1');";
+            $sql="INSERT INTO horarios (id_horario, id_empleado, id_turno, fecha_inicio, fecha_fin, est) VALUES (NULL,?,?,?,?,'1');";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $id_empleado);
             $sql->bindValue(2, $id_turno);
@@ -42,7 +42,7 @@
             return $resultado=$sql->fetchAll();
         }
 
-        public function update_horario($id,$id_empleado,$id_turno,$fecha_inicio,$fecha_fin){
+        public function update_horario($id_horario,$id_empleado,$id_turno,$fecha_inicio,$fecha_fin){
             $conectar= parent::conexion();
             parent::set_names();
             $sql="UPDATE horarios set
@@ -51,26 +51,26 @@
                 fecha_inicio = ?,
                 fecha_fin = ?
                 WHERE
-                id = ?";
+                id_horario = ?";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $id_empleado);
             $sql->bindValue(2, $id_turno);
             $sql->bindValue(3, $fecha_inicio);
             $sql->bindValue(4, $fecha_fin);
-            $sql->bindValue(5, $id);
+            $sql->bindValue(5, $id_horario);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
 
-        public function delete_horario($id){
+        public function delete_horario($id_horario){
             $conectar= parent::conexion();
             parent::set_names();
             $sql="UPDATE horarios 
             SET 
             est='0'
-            where id=?";
+            where id_horario=?";
             $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $id);
+            $sql->bindValue(1, $id_horario);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }

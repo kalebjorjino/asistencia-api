@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <?php require_once("../MainHead/head.php");?>
-	<title>Horarios</title>
+	<title>Dias Laborales</title>
 </head>
 <body class="with-side-menu">
 
@@ -22,10 +22,10 @@
 				<div class="tbl">
 					<div class="tbl-row">
 						<div class="tbl-cell">
-							<h3>Horarios</h3>
+							<h3>Dias Laborales</h3>
 							<ol class="breadcrumb breadcrumb-simple">
 								<li><a href="#">Home</a></li>
-								<li class="active">Horarios</li>
+								<li class="active">Dias Laborales</li>
 							</ol>
 						</div>
 					</div>
@@ -38,10 +38,10 @@
 					<thead>
 						<tr>
 							                    <th class="text-center" style="width: 5%;">ID</th>
-                                                <th class="text-center" style="width: 5%;">Empleado</th>
-												<th class="text-center" style="width: 5%;">Turno</th>
-                                                <th class="text-center" style="width: 5%;">Fecha Inicio</th>
-                                                <th class="text-center" style="width: 5%;">Fecha Fin</th>
+                                                <th class="text-center" style="width: 5%;">Horario</th>
+                                                <th class="text-center" style="width: 5%;">Turno</th>
+                                                <th class="text-center" style="width: 5%;">Dia</th>
+                                                <th class="text-center" style="width: 5%;">Estado</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 
@@ -60,11 +60,11 @@
     <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
 
-    <?php require_once("ModalHorario.php");?>
+    <?php require_once("ModalDiasLaborales.php");?>
 
 	<?php require_once("../MainJs/index.php");?>
 	
-	<script type="text/javascript" src="horario.js"></script>
+	<script type="text/javascript" src="diasLaborales.js"></script>
 
 
 </body>

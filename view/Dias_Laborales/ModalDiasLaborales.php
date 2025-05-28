@@ -1,12 +1,12 @@
-<div id="modalHorario" class="modal fade bd-example-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="modalDiasLab" class="modal fade bd-example-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title text-white" id="mdltitulo"></h4>
             </div>
-            <form method="post" id="horario_form">
+            <form method="post" id="diaslab_form">
                 <div class="modal-body">
-                    <input type="hidden" id="id_horario" name="id_horario">
+                    <input type="hidden" id="id" name="id">
 
                     <div class="form-group">
                         <label class="form-label" for="id_empleado">Empleado</label>
@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="id_turno">Turno</label>
+                        <label class="form-label" for="id_turno">Horario</label>
                          <select id="id_turno" name="id_turno" class="form-control" required="required">
                         </select>
                     </div>

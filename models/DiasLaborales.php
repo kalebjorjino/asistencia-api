@@ -11,7 +11,7 @@ class DiasLaborales extends Conectar {
                     dl.dia,
                     dl.activo
                 FROM dias_laborales dl
-                INNER JOIN horarios h ON dl.id_horario = h.id
+                INNER JOIN horarios h ON dl.id_horario = h.id_horario
                 WHERE dl.est = 1";
         $sql = $conectar->prepare($sql);
         $sql->execute();

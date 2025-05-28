@@ -53,41 +53,71 @@
         }
 
       public function crearAsistencia($usuarioId, $ubicacion, $foto){
-    $conectar = parent::conexion();
-    parent::set_names();
+        $conectar = parent::conexion();
+        parent::set_names();
 
-    $zonaHoraria = new DateTimeZone('America/Lima');
-    $horaEntrada = new DateTime('now', $zonaHoraria);
-    $horaEntradaStr = $horaEntrada->format('Y-m-d H:i:s');
-    $fechaActual = $horaEntrada->format('Y-m-d');
+        $zonaHoraria = new DateTimeZone('America/Lima');
+        $horaEntrada = new DateTime('now', $zonaHoraria);
+        $horaEntradaStr = $horaEntrada->format('Y-m-d H:i:s');
+        $fechaActual = $horaEntrada->format('Y-m-d');
+        $diaSemana = $horaEntrada->format('N'); // 1 (lunes) a 7 (domingo)
 
-    // Buscar horario vigente del empleado
-    $sqlHorario = "SELECT hora_inicio, tolerancia_minutos 
-                   FROM horarios 
-                   WHERE id_empleado = ? 
-                     AND fecha_inicio <= ? 
-                     AND (fecha_fin IS NULL OR fecha_fin >= ?) 
-                     AND est = 1 
-                   ORDER BY fecha_inicio DESC 
-                   LIMIT 1";
-    $stmtHorario = $conectar->prepare($sqlHorario);
-    $stmtHorario->bindValue(1, $usuarioId);
-    $stmtHorario->bindValue(2, $fechaActual);
-    $stmtHorario->bindValue(3, $fechaActual);
-    $stmtHorario->execute();
-    $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
+        // Buscar horario vigente del empleado
+        $sqlHorario = "SELECT h.id_horario, h.id_turno 
+                       FROM horarios h
+                       WHERE h.id_empleado = ? 
+                         AND h.fecha_inicio <= ? 
+                         AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
+                         AND h.est = 1 
+                       ORDER BY h.fecha_inicio DESC 
+                       LIMIT 1";
+        $stmtHorario = $conectar->prepare($sqlHorario);
+        $stmtHorario->bindValue(1, $usuarioId);
+        $stmtHorario->bindValue(2, $fechaActual);
+        $stmtHorario->bindValue(3, $fechaActual);
+        $stmtHorario->execute();
+        $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
 
-    // NUEVA VERIFICACIÓN: Si no se encuentra horario, lanzar excepción.
-    if (!$horario) {
-        // Usar código 400 para indicar que la solicitud es incorrecta (falta horario)
-        throw new Exception("Empleado no tiene horario registrado para hoy.", 400);
-    }
+        // NUEVA VERIFICACIÓN: Si no se encuentra horario, lanzar excepción.
+        if (!$horario) {
+            // Usar código 400 para indicar que la solicitud es incorrecta (falta horario)
+            throw new Exception("Empleado no tiene horario registrado para hoy.", 400);
+        }
 
-    $tardanza = "00:00:00";  // Por defecto no hay tardanza
+        // Verificar si el día actual es laborable para este horario
+        $sqlDiaLaboral = "SELECT activo 
+                          FROM dias_laborales 
+                          WHERE id_horario = ? 
+                            AND dia = ? 
+                            AND est = 1";
+        $stmtDiaLaboral = $conectar->prepare($sqlDiaLaboral);
+        $stmtDiaLaboral->bindValue(1, $horario['id']);
+        $stmtDiaLaboral->bindValue(2, $diaSemana);
+        $stmtDiaLaboral->execute();
+        $diaLaboral = $stmtDiaLaboral->fetch(PDO::FETCH_ASSOC);
 
-    if ($horario) {
-        $horaInicio = new DateTime($fechaActual . ' ' . $horario['hora_inicio'], $zonaHoraria);
-        $toleranciaMin = intval($horario['tolerancia_minutos']);
+        if (!$diaLaboral || $diaLaboral['activo'] != 1) {
+            throw new Exception("Hoy no es un día laborable según el horario asignado.", 400);
+        }
+
+        // Obtener información del turno (hora_inicio, hora_fin, tolerancia_minutos)
+        $sqlTurno = "SELECT hora_inicio, hora_fin, tolerancia_minutos 
+                     FROM turnos 
+                     WHERE id_turno = ? 
+                       AND est = 1";
+        $stmtTurno = $conectar->prepare($sqlTurno);
+        $stmtTurno->bindValue(1, $horario['id_turno']);
+        $stmtTurno->execute();
+        $turno = $stmtTurno->fetch(PDO::FETCH_ASSOC);
+
+        if (!$turno) {
+            throw new Exception("No se encontró información del turno asignado.", 400);
+        }
+
+        $tardanza = "00:00:00";  // Por defecto no hay tardanza
+
+        $horaInicio = new DateTime($fechaActual . ' ' . $turno['hora_inicio'], $zonaHoraria);
+        $toleranciaMin = intval($turno['tolerancia_minutos']);
         $horaLimite = clone $horaInicio;
         $horaLimite->modify("+{$toleranciaMin} minutes");
 
@@ -100,29 +130,26 @@
             $tardanza = sprintf('%02d:%02d:%02d', $h, $m, $s);
         }
         // Si llega antes o en límite, tardanza queda en "00:00:00"
+
+        // Insertar siempre con tardanza calculada
+        $sql = "INSERT INTO asistencia (
+                    id_empleado,
+                    ubicacion,
+                    foto,
+                    hora_entrada,
+                    tardanza,
+                    est
+                ) VALUES (?, ?, ?, ?, ?, 1)";
+        $stmt = $conectar->prepare($sql);
+        $stmt->bindValue(1, $usuarioId);
+        $stmt->bindValue(2, $ubicacion);
+        $stmt->bindValue(3, $foto);
+        $stmt->bindValue(4, $horaEntradaStr);
+        $stmt->bindValue(5, $tardanza);
+
+        $stmt->execute();
+        return $conectar->lastInsertId();
     }
-
-    // Insertar siempre con tardanza calculada
-    $sql = "INSERT INTO asistencia (
-                id_empleado,
-                ubicacion,
-                foto,
-                hora_entrada,
-                tardanza,
-                est
-            ) VALUES (?, ?, ?, ?, ?, 1)";
-    $stmt = $conectar->prepare($sql);
-    $stmt->bindValue(1, $usuarioId);
-    $stmt->bindValue(2, $ubicacion);
-    $stmt->bindValue(3, $foto);
-    $stmt->bindValue(4, $horaEntradaStr);
-    $stmt->bindValue(5, $tardanza);
-
-    $stmt->execute();
-    return $conectar->lastInsertId();
-}
-
-
 
         public function tieneEntradaActiva($empleadoId){
             $conectar=parent::conexion();
@@ -135,92 +162,103 @@
             return (is_array($resultado) && count($resultado) > 0);
         }
 
- public function registrarSalida($empleadoId) {
-    $conectar = parent::conexion();
-    parent::set_names();
+        public function registrarSalida($empleadoId) {
+            $conectar = parent::conexion();
+            parent::set_names();
 
-    // 1. Obtener el registro pendiente (sin hora_salida)
-    $sql = "SELECT id_as, hora_entrada 
-            FROM asistencia 
-            WHERE id_empleado = ? AND hora_salida IS NULL 
-            ORDER BY hora_entrada DESC 
-            LIMIT 1";
-    $stmt = $conectar->prepare($sql);
-    $stmt->bindValue(1, $empleadoId);
-    $stmt->execute();
-    $asistencia = $stmt->fetch(PDO::FETCH_ASSOC);
+            // 1. Obtener el registro pendiente (sin hora_salida)
+            $sql = "SELECT id_as, hora_entrada 
+                    FROM asistencia 
+                    WHERE id_empleado = ? AND hora_salida IS NULL 
+                    ORDER BY hora_entrada DESC 
+                    LIMIT 1";
+            $stmt = $conectar->prepare($sql);
+            $stmt->bindValue(1, $empleadoId);
+            $stmt->execute();
+            $asistencia = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$asistencia) {
-        return 0; // No hay registro sin salida pendiente
-    }
+            if (!$asistencia) {
+                return 0; // No hay registro sin salida pendiente
+            }
 
-    $idAsistencia = $asistencia['id_as'];
-    $horaEntrada = new DateTime($asistencia['hora_entrada']);
-    $horaSalida = new DateTime(); // ahora
-    $horaSalidaStr = $horaSalida->format('Y-m-d H:i:s');
-    $fechaAsistencia = $horaEntrada->format('Y-m-d');
+            $idAsistencia = $asistencia['id_as'];
+            $horaEntrada = new DateTime($asistencia['hora_entrada']);
+            $horaSalida = new DateTime(); // ahora
+            $horaSalidaStr = $horaSalida->format('Y-m-d H:i:s');
+            $fechaAsistencia = $horaEntrada->format('Y-m-d');
 
-    // 2. Obtener horario vigente para esa fecha y empleado
-    $sqlHorario = "SELECT hora_inicio, hora_fin 
-                   FROM horarios 
-                   WHERE id_empleado = ? 
-                     AND fecha_inicio <= ? 
-                     AND (fecha_fin IS NULL OR fecha_fin >= ?) 
-                     AND est = 1 
-                   ORDER BY fecha_inicio DESC 
-                   LIMIT 1";
-    $stmtHorario = $conectar->prepare($sqlHorario);
-    $stmtHorario->bindValue(1, $empleadoId);
-    $stmtHorario->bindValue(2, $fechaAsistencia);
-    $stmtHorario->bindValue(3, $fechaAsistencia);
-    $stmtHorario->execute();
-    $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
+            // 2. Obtener horario vigente para esa fecha y empleado
+            $sqlHorario = "SELECT h.id_horario, h.id_turno 
+                           FROM horarios h
+                           WHERE h.id_empleado = ? 
+                             AND h.fecha_inicio <= ? 
+                             AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
+                             AND h.est = 1 
+                           ORDER BY h.fecha_inicio DESC 
+                           LIMIT 1";
+            $stmtHorario = $conectar->prepare($sqlHorario);
+            $stmtHorario->bindValue(1, $empleadoId);
+            $stmtHorario->bindValue(2, $fechaAsistencia);
+            $stmtHorario->bindValue(3, $fechaAsistencia);
+            $stmtHorario->execute();
+            $horario = $stmtHorario->fetch(PDO::FETCH_ASSOC);
 
-    if (!$horario) {
-        throw new Exception("No se encontró horario vigente para el empleado $empleadoId en la fecha $fechaAsistencia.");
-    }
+            if (!$horario) {
+                throw new Exception("No se encontró horario vigente para el empleado $empleadoId en la fecha $fechaAsistencia.");
+            }
 
-    $zonaHoraria = new DateTimeZone('America/Lima');
-    $horaEntradaEsperada = new DateTime("$fechaAsistencia " . $horario['hora_inicio'], $zonaHoraria);
-    $horaSalidaEsperada  = new DateTime("$fechaAsistencia " . $horario['hora_fin'], $zonaHoraria);
+            // Obtener información del turno (hora_inicio, hora_fin)
+            $sqlTurno = "SELECT hora_inicio, hora_fin 
+                         FROM turnos 
+                         WHERE id_turno = ? 
+                           AND est = 1";
+            $stmtTurno = $conectar->prepare($sqlTurno);
+            $stmtTurno->bindValue(1, $horario['id_turno']);
+            $stmtTurno->execute();
+            $turno = $stmtTurno->fetch(PDO::FETCH_ASSOC);
 
-    // 3. Calcular horas trabajadas
-    $horaEntrada = new DateTime($asistencia['hora_entrada'], $zonaHoraria);
-    $horaSalida = new DateTime('now', $zonaHoraria);
+            if (!$turno) {
+                throw new Exception("No se encontró información del turno asignado.");
+            }
 
-    $segundosTrabajados = $horaSalida->getTimestamp() - $horaEntrada->getTimestamp();
-    $horas = floor($segundosTrabajados / 3600);
-    $minutos = floor(($segundosTrabajados % 3600) / 60);
-    $segundos = $segundosTrabajados % 60;
-    $horasTrabajadas = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
+            $zonaHoraria = new DateTimeZone('America/Lima');
+            $horaEntradaEsperada = new DateTime("$fechaAsistencia " . $turno['hora_inicio'], $zonaHoraria);
+            $horaSalidaEsperada  = new DateTime("$fechaAsistencia " . $turno['hora_fin'], $zonaHoraria);
 
-    // 4. Calcular horas extra (si aplica)
-    $horasExtras = '00:00:00';
-    if ($horaSalida > $horaSalidaEsperada && $horaEntrada <= $horaSalidaEsperada) {
-        $segundosExtra = $horaSalida->getTimestamp() - $horaSalidaEsperada->getTimestamp();
-        $h = floor($segundosExtra / 3600);
-        $m = floor(($segundosExtra % 3600) / 60);
-        $s = $segundosExtra % 60;
-        $horasExtras = sprintf('%02d:%02d:%02d', $h, $m, $s);
-    }
+            // 3. Calcular horas trabajadas
+            $horaEntrada = new DateTime($asistencia['hora_entrada'], $zonaHoraria);
+            $horaSalida = new DateTime('now', $zonaHoraria);
 
-    // 5. Actualizar asistencia
-    $sqlUpdate = "UPDATE asistencia SET 
-                    hora_salida = CURRENT_TIMESTAMP, 
-                    horas_trabajadas = ?, 
-                    horas_extras = ?
-                  WHERE id_as = ?";
-    $stmtUpdate = $conectar->prepare($sqlUpdate);
-    $stmtUpdate->bindValue(1, $horasTrabajadas);
-    $stmtUpdate->bindValue(2, $horasExtras);
-    $stmtUpdate->bindValue(3, $idAsistencia);
-    $stmtUpdate->execute();
+            $segundosTrabajados = $horaSalida->getTimestamp() - $horaEntrada->getTimestamp();
+            $horas = floor($segundosTrabajados / 3600);
+            $minutos = floor(($segundosTrabajados % 3600) / 60);
+            $segundos = $segundosTrabajados % 60;
+            $horasTrabajadas = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
 
-    return $stmtUpdate->rowCount();
-}
+            // 4. Calcular horas extra (si aplica)
+            $horasExtras = '00:00:00';
+            if ($horaSalida > $horaSalidaEsperada && $horaEntrada <= $horaSalidaEsperada) {
+                $segundosExtra = $horaSalida->getTimestamp() - $horaSalidaEsperada->getTimestamp();
+                $h = floor($segundosExtra / 3600);
+                $m = floor(($segundosExtra % 3600) / 60);
+                $s = $segundosExtra % 60;
+                $horasExtras = sprintf('%02d:%02d:%02d', $h, $m, $s);
+            }
 
+            // 5. Actualizar asistencia
+            $sqlUpdate = "UPDATE asistencia SET 
+                            hora_salida = CURRENT_TIMESTAMP, 
+                            horas_trabajadas = ?, 
+                            horas_extras = ?
+                          WHERE id_as = ?";
+            $stmtUpdate = $conectar->prepare($sqlUpdate);
+            $stmtUpdate->bindValue(1, $horasTrabajadas);
+            $stmtUpdate->bindValue(2, $horasExtras);
+            $stmtUpdate->bindValue(3, $idAsistencia);
+            $stmtUpdate->execute();
 
-
+            return $stmtUpdate->rowCount();
+        }
 
         public function obtenerAsistenciaActivaPorEmpleado($empleadoId){
             $conectar=parent::conexion();

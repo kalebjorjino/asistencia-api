@@ -11,7 +11,7 @@
                 $horario->insert_horario($_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);     
             }
             else {
-                $horario->update_horario($_POST["id"],$_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);
+                $horario->update_horario($_POST["id_horario"],$_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);
             }
         break;
 
@@ -20,13 +20,13 @@
             $data= Array();
             foreach($datos as $row){
                 $sub_array = array();
-                $sub_array[] = $row["id"];
+                $sub_array[] = $row["id_horario"];
                 $sub_array[] = $row["empleado"];
                 $sub_array[] = $row["nombre"];
                 $sub_array[] = $row["fecha_inicio"];
                 $sub_array[] = $row["fecha_fin"];
-                $sub_array[] = '<button type="button" onClick="editar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
-                $sub_array[] = '<button type="button" onClick="eliminar('.$row["id"].');"  id="'.$row["id"].'" class="btn btn-inline btn-danger btn-sm ladda-button">Eliminar</button>';
+                $sub_array[] = '<button type="button" onClick="editar('.$row["id_horario"].');"  id="'.$row["id_horario"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
+                $sub_array[] = '<button type="button" onClick="eliminar('.$row["id_horario"].');"  id="'.$row["id_horario"].'" class="btn btn-inline btn-danger btn-sm ladda-button">Eliminar</button>';
                 $data[] = $sub_array;
             }
 
@@ -39,15 +39,15 @@
         break;
 
         case "eliminar":
-            $horario->delete_horario($_POST["id"]);
+            $horario->delete_horario($_POST["id_horario"]);
         break;
 
         case "mostrar";
-            $datos=$horario->get_horario_x_id($_POST["id"]);  
+            $datos=$horario->get_horario_x_id($_POST["id_horario"]);  
             if(is_array($datos)==true and count($datos)>0){
                 foreach($datos as $row)
                 {
-                    $output["id"] = $row["id"];
+                    $output["id_horario"] = $row["id_horario"];
                     $output["id_empleado"] = $row["id_empleado"];
                     $output["id_turno"] = $row["id_turno"];
                     $output["fecha_inicio"] = $row["fecha_inicio"];

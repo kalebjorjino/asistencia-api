@@ -1,28 +1,28 @@
 var tabla;
 
 function init(){
-    $("#horario_form").on("submit",function(e){
+    $("#diaslab_form").on("submit",function(e){
         guardaryeditar(e);	
     });
 }
 
 function guardaryeditar(e){
     e.preventDefault();
-	var formData = new FormData($("#horario_form")[0]);
+	var formData = new FormData($("#diaslab_form")[0]);
     $.ajax({
-        url: "../../controller/horario.php?op=guardaryeditar",
+        url: "../../controller/diasLaborales.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
         success: function(datos){    
             console.log(datos);
-            $('#horario_form')[0].reset();
-            $("#modalHorario").modal('hide');
+            $('#diaslab_form')[0].reset();
+            $("#modalDiasLab").modal('hide');
             $('#datatable-buttons').DataTable().ajax.reload();
 
             swal({
-                title: "Horario!",
+                title: "Dias Laboral!",
                 text: "Completado.",
                 type: "success",
                 confirmButtonClass: "btn-success"
@@ -49,7 +49,7 @@ $(document).ready(function(){
                 'pdfHtml5'
                 ],
         "ajax":{
-            url: '../../controller/horario.php?op=listar',
+            url: '../../controller/diasLaborales.php?op=listar',
             type : "post",
             dataType : "json",						
             error: function(e){
@@ -88,8 +88,8 @@ $(document).ready(function(){
         }     
     }).DataTable(); 
 
-     $.post("../../controller/empleado.php?op=combo",function(data, status){
-        $('#id_empleado').html(data);
+     $.post("../../controller/horario.php?op=combo",function(data, status){
+        $('#id_horario').html(data);
     });
 
      $.post("../../controller/turno.php?op=combo",function(data, status){
@@ -99,24 +99,23 @@ $(document).ready(function(){
   
 });
 
-function editar(id_horario){
+function editar(id){
     $('#mdltitulo').html('Editar Registro');
 
-    $.post("../../controller/horario.php?op=mostrar", {id_horario : id_horario}, function (data) {
+    $.post("../../controller/diasLaborales.php?op=mostrar", {id : id}, function (data) {
         data = JSON.parse(data);
+        $('#id').val(data.id);
         $('#id_horario').val(data.id_horario);
-        $('#id_empleado').val(data.id_empleado);
-        $('#id_turno').val(data.id_turno);
-        $('#fecha_inicio').val(data.fecha_inicio);
-        $('#fecha_fin').val(data.fecha_fin);
+        $('#dia').val(data.dia);
+        $('#activo').val(data.activo);
     }); 
 
-    $('#modalHorario').modal('show');
+    $('#modalDiasLab').modal('show');
 }
 
-function eliminar(id_horario){
+function eliminar(id){
     swal({
-        title: "Horario",
+        title: "Dias Laboral",
         text: "Esta seguro de Eliminar el registro?",
         type: "error",
         showCancelButton: true,
@@ -129,7 +128,7 @@ function eliminar(id_horario){
     },
     function(isConfirm) {
         if (isConfirm) {
-            $.post("../../controller/horario.php?op=eliminar", {id_horario : id_horario}, function (data) {
+            $.post("../../controller/diasLaborales.php?op=eliminar", {id : id}, function (data) {
 
             }); 
 
@@ -149,8 +148,8 @@ function eliminar(id_horario){
 
 $(document).on("click","#btnnuevo", function(){
     $('#mdltitulo').html('Nuevo Registro');
-    $('#horario_form')[0].reset();
-    $('#modalHorario').modal('show');
+    $('#diaslab_form')[0].reset();
+    $('#modalDiasLab').modal('show');
 });
 
 
