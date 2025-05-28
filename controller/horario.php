@@ -4,8 +4,20 @@
     $horario = new Horario();
 
     switch($_GET["op"]){
-        
 
+        case "combo":
+            $datos = $horario->get_horario();
+            if(is_array($datos)==true and count($datos)>0){
+                echo "<option value=''>Selecciona</option>"; // Opción inicial por defecto
+                $html;
+                foreach($datos as $row)
+                {
+                    $html.= "<option value='".$row['id_horario']."'>".$row['id_horario']."</option>";
+                }
+                echo $html;
+            }
+        break;
+         
          case "guardaryeditar":
             if(empty($_POST["id"])){       
                 $horario->insert_horario($_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);     

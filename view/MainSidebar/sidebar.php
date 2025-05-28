@@ -30,10 +30,22 @@
                             <span class="lbl">Empleados</span>
                         </a>
                     </li>
+                    <li class="green with-sub opened">
+                        <a href="..\Turno\">
+                            <span class="glyphicon glyphicon-list-alt"></span>
+                            <span class="lbl">Turnos</span>
+                        </a>
+                    </li>
                      <li class="green with-sub opened">
                         <a href="..\Horario\">
                             <span class="glyphicon glyphicon-list-alt"></span>
                             <span class="lbl">Horarios</span>
+                        </a>
+                    </li>
+                     <li class="green with-sub opened">
+                        <a href="..\Dias_Laborales\">
+                            <span class="glyphicon glyphicon-list-alt"></span>
+                            <span class="lbl">Dias Laborales</span>
                         </a>
                     </li>
                     <li class="blue-dirty">

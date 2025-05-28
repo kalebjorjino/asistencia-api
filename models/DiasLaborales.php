@@ -7,12 +7,11 @@ class DiasLaborales extends Conectar {
         $sql = "SELECT 
                     dl.id,
                     dl.id_horario,
-                    h.id_turno,
                     dl.dia,
                     dl.activo
                 FROM dias_laborales dl
                 INNER JOIN horarios h ON dl.id_horario = h.id_horario
-                WHERE dl.est = 1";
+                WHERE dl.est = 1;";
         $sql = $conectar->prepare($sql);
         $sql->execute();
         return $sql->fetchAll();
@@ -41,17 +40,16 @@ class DiasLaborales extends Conectar {
         return $conectar->lastInsertId();
     }
 
-    public function update_dia_laboral($id, $id_horario, $dia, $activo) {
+    public function update_dia_laboral($id, $dia, $activo) {
         $conectar = parent::conexion();
         parent::set_names();
         $sql = "UPDATE dias_laborales 
-                SET id_horario = ?, dia = ?, activo = ?
+                SET dia = ?, activo = ?
                 WHERE id = ?";
         $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $id_horario);
-        $sql->bindValue(2, $dia);
-        $sql->bindValue(3, $activo);
-        $sql->bindValue(4, $id);
+        $sql->bindValue(1, $dia);
+        $sql->bindValue(2, $activo);
+        $sql->bindValue(3, $id);
         $sql->execute();
         return $sql->rowCount();
     }

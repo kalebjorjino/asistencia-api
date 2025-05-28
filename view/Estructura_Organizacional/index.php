@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <?php require_once("../MainHead/head.php");?>
-	<title>Dias Laborales</title>
+	<title>Organizacion</title>
 </head>
 <body class="with-side-menu">
 
@@ -22,10 +22,10 @@
 				<div class="tbl">
 					<div class="tbl-row">
 						<div class="tbl-cell">
-							<h3>Dias Laborales</h3>
+							<h3>Organizacion</h3>
 							<ol class="breadcrumb breadcrumb-simple">
 								<li><a href="#">Home</a></li>
-								<li class="active">Dias Laborales</li>
+								<li class="active">Organizacion</li>
 							</ol>
 						</div>
 					</div>
@@ -37,10 +37,12 @@
 				<table id="datatable-buttons" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 					<thead>
 						<tr>
-							                    <th class="text-center" style="width: 5%;">ID</th>
-                                                <th class="text-center" style="width: 5%;">Horario</th>
-                                                <th class="text-center" style="width: 5%;">Dia</th>
-                                                <th class="text-center" style="width: 5%;">Estado</th>
+							
+                                                <th class="text-center" style="width: 5%;">ID</th>
+                                                <th class="text-center" style="width: 5%;">DNI</th>
+                                                <th class="text-center" style="width: 5%;">Nombre</th>
+                                                <th class="text-center" style="width: 5%;">Profesion</th>
+                                                <th class="text-center" style="width: 5%;">Fecha Registro</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 
@@ -59,11 +61,11 @@
     <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
 
-    <?php require_once("ModalDiasLaborales.php");?>
+    <?php require_once("ModalIndex.php");?>
 
 	<?php require_once("../MainJs/index.php");?>
 	
-	<script type="text/javascript" src="diasLaborales.js"></script>
+	<script type="text/javascript" src="index.js"></script>
 
 
 </body>

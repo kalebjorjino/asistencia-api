@@ -94,9 +94,10 @@ $(document).ready(function(){
 function editar(id_turno){
     $('#mdltitulo').html('Editar Registro');
 
-    $.post("../../controller/horario.php?op=mostrar", {id_turno : id_turno}, function (data) {
+    $.post("../../controller/turno.php?op=mostrar", {id_turno : id_turno}, function (data) {
         data = JSON.parse(data);
         $('#id_turno').val(data.id_turno);
+        $('#nombre').val(data.nombre);
         $('#hora_inicio').val(data.hora_inicio);
         $('#hora_fin').val(data.hora_fin);
         $('#tolerancia_minutos').val(data.tolerancia_minutos);

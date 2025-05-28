@@ -10,11 +10,7 @@
 
                     <div class="form-group">
                         <label class="form-label" for="nombre">Nombre Turno</label>
-                         <select class="form-control" id="nombre" name="nombre">
-                            <option value="mañana">Mañana</option>
-                            <option value="tarde">Tarde</option>
-                            <option value="noche">Noche</option>
-                        </select>
+                         <input type="text" class="form-control" id="nombre" name="nombre" required>
                     </div>
 
                     <div class="form-group">
@@ -29,7 +25,7 @@
 
                     <div class="form-group">
                         <label class="form-label" for="tolerancia_minutos">Tolerancia/Minutos</label>
-                        <input type="time" class="form-control" id="tolerancia_minutos" name="tolerancia_minutos"  required>
+                        <input type="number" class="form-control" id="tolerancia_minutos" name="tolerancia_minutos"  required>
                     </div>
                 </div>
                 <div class="modal-footer">

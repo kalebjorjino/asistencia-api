@@ -11,7 +11,7 @@ switch($_GET["op"]) {
             $diasLaborales->insert_dia_laboral($_POST["id_horario"], $_POST["dia"], $_POST["activo"]);     
         } else {
             // Actualizar día laboral existente
-            $diasLaborales->update_dia_laboral($_POST["id"], $_POST["id_horario"], $_POST["dia"], $_POST["activo"]);
+            $diasLaborales->update_dia_laboral($_POST["id"], $_POST["dia"], $_POST["activo"]);
         }
         break;
 
@@ -22,7 +22,6 @@ switch($_GET["op"]) {
             $sub_array = array();
             $sub_array[] = $row["id"];
             $sub_array[] = $row["id_horario"];
-            $sub_array[] = $row["id_turno"]; // si quieres mostrar el turno asociado
             $sub_array[] = $row["dia"];
             $sub_array[] = $row["activo"] ? 'Activo' : 'Inactivo';
             $sub_array[] = '<button type="button" onClick="editar('.$row["id"].');" id="'.$row["id"].'" class="btn btn-warning btn-sm">Editar</button>';
@@ -38,6 +37,7 @@ switch($_GET["op"]) {
         );
         echo json_encode($results);
         break;
+
 
     case "eliminar":
         $diasLaborales->delete_dia_laboral($_POST["id"]);

@@ -4,6 +4,19 @@
     $turno = new Turno();
 
     switch($_GET["op"]){
+
+         case "combo":
+            $datos = $turno->get_turno();
+            if(is_array($datos)==true and count($datos)>0){
+                echo "<option value=''>Selecciona</option>"; // Opción inicial por defecto
+                $html;
+                foreach($datos as $row)
+                {
+                    $html.= "<option value='".$row['id_turno']."'>".$row['nombre']."</option>";
+                }
+                echo $html;
+            }
+        break;
         
 
          case "guardaryeditar":

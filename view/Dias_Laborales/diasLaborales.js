@@ -92,11 +92,6 @@ $(document).ready(function(){
         $('#id_horario').html(data);
     });
 
-     $.post("../../controller/turno.php?op=combo",function(data, status){
-        $('#id_turno').html(data);
-    });
-
-  
 });
 
 function editar(id){
