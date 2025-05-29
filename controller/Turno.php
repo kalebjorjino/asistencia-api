@@ -8,7 +8,7 @@
          case "combo":
             $datos = $turno->get_turno();
             if(is_array($datos)==true and count($datos)>0){
-                echo "<option value=''>Selecciona</option>"; // Opción inicial por defecto
+                echo "<option value=''>Selecciona</option>"; 
                 $html;
                 foreach($datos as $row)
                 {
