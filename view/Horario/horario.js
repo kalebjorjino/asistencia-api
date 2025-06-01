@@ -9,29 +9,64 @@ function init(){
 function guardaryeditar(e){
     e.preventDefault();
 	var formData = new FormData($("#horario_form")[0]);
+
     $.ajax({
         url: "../../controller/horario.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
-        success: function(datos){    
-            console.log(datos);
-            $('#horario_form')[0].reset();
-            $("#modalHorario").modal('hide');
-            $('#datatable-buttons').DataTable().ajax.reload();
+        success: function(respuesta) {
+            try {
+                const datos = JSON.parse(respuesta);
+                console.log(datos);
 
+                if (datos.error) {
+                    swal({
+                        title: "Error",
+                        text: datos.error,
+                        type: "error",
+                        confirmButtonClass: "btn-danger"
+                    });
+                } else if (datos.success) {
+                    $('#horario_form')[0].reset();
+                    $("#modalHorario").modal('hide');
+                    $('#datatable-buttons').DataTable().ajax.reload();
+
+                    swal({
+                        title: "Horario!",
+                        text: "Guardado correctamente.",
+                        type: "success",
+                        confirmButtonClass: "btn-success"
+                    });
+                } else {
+                    swal({
+                        title: "Atención",
+                        text: "Respuesta inesperada del servidor.",
+                        type: "warning"
+                    });
+                }
+
+            } catch (e) {
+                console.error("Error al procesar JSON:", e, respuesta);
+                swal({
+                    title: "Error",
+                    text: "Ocurrió un problema inesperado. Revisa la consola para más detalles.",
+                    type: "error"
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error AJAX:", status, error);
             swal({
-                title: "Horario!",
-                text: "Completado.",
-                type: "success",
-                confirmButtonClass: "btn-success"
+                title: "Error",
+                text: "No se pudo conectar con el servidor.",
+                type: "error"
             });
         }
-    }); 
-
-
+    });
 }
+
 
 
 $(document).ready(function(){
@@ -117,34 +152,27 @@ function editar(id_horario){
 function eliminar(id_horario){
     swal({
         title: "Horario",
-        text: "Esta seguro de Eliminar el registro?",
-        type: "error",
+        text: "¿Estás seguro de eliminar el registro?",
+        type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
-        confirmButtonText: "Si",
-        cancelButtonText: "No",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
         closeOnConfirm: false
-        
-        
     },
     function(isConfirm) {
         if (isConfirm) {
             $.post("../../controller/horario.php?op=eliminar", {id_horario : id_horario}, function (data) {
-
-            }); 
-
-            $('#datatable-buttons').DataTable().ajax.reload();	
-
-            swal({
-                title: "Horario!",
-                text: "Registro Eliminado.",
-                type: "success",
-                confirmButtonClass: "btn-success"
+                var respuesta = JSON.parse(data);
+                if (respuesta.success) {
+                    $('#datatable-buttons').DataTable().ajax.reload();	
+                    swal("Horario!", "Registro eliminado correctamente.", "success");
+                } else {
+                    swal("Error", respuesta.error, "error");
+                }
             });
         }
     });
-  
-    
 }
 
 $(document).on("click","#btnnuevo", function(){

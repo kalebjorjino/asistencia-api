@@ -59,7 +59,7 @@
                                     <form action="" method="post" id="login_form">
                                     <input type="hidden" id="rol_id" name="rol_id" value="2">
                                     <div class="form-group mb-3 text-center text-uppercase">
-                                            <label for="" class="font-weight-medium" id="lbltitulo">Ingreso de Usuario</label>
+                                            <label for="" class="font-weight-medium" id="lbltitulo">Ingreso de Administrador</label>
                                         </div>
                                         <div class="form-group mb-3">
                                             <label for="emailaddress" class="font-weight-medium">Usuario</label>
@@ -71,6 +71,17 @@
                                             <label for="password" class="font-weight-medium">Contraseña</label>
                                             <input class="form-control" type="password" id="usu_pass" name="usu_pass" required="" 
                                                 placeholder="Ingrese Contraseña">
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <!-- Checkbox -->
+                                                <div class="form-check mb-0">
+                                                    <a href="#" id="btnadmin">
+                                                        Supervisor
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="form-group row text-center">
@@ -125,6 +136,7 @@
         });
     });
     </script>
+    <script type="text/javascript" src="index.js"></script>
     
 
 </body>

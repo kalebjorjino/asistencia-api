@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <?php require_once("../MainHead/head.php");?>
-	<title>Organizacion</title>
+	<title>Servicio</title>
 </head>
 <body class="with-side-menu">
 
@@ -22,10 +22,10 @@
 				<div class="tbl">
 					<div class="tbl-row">
 						<div class="tbl-cell">
-							<h3>Organizacion</h3>
+							<h3>Servicio</h3>
 							<ol class="breadcrumb breadcrumb-simple">
 								<li><a href="#">Home</a></li>
-								<li class="active">Organizacion</li>
+								<li class="active">Servicio</li>
 							</ol>
 						</div>
 					</div>
@@ -39,10 +39,8 @@
 						<tr>
 							
                                                 <th class="text-center" style="width: 5%;">ID</th>
-                                                <th class="text-center" style="width: 5%;">DNI</th>
-                                                <th class="text-center" style="width: 5%;">Nombre</th>
-                                                <th class="text-center" style="width: 5%;">Profesion</th>
-                                                <th class="text-center" style="width: 5%;">Fecha Registro</th>
+                                                <th class="text-center" style="width: 5%;">Servicio</th>
+                                                <th class="text-center" style="width: 5%;">Descripcion</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 
@@ -61,7 +59,7 @@
     <!-- Footer -->
     <?php require_once("../MainFooter/footer.php");?>
 
-    <?php require_once("ModalIndex.php");?>
+    <?php require_once("modalServicio.php");?>
 
 	<?php require_once("../MainJs/index.php");?>
 	

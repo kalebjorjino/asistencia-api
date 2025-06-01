@@ -9,13 +9,9 @@
                     <input type="hidden" id="usu_id" name="usu_id">
 
                     <div class="form-group">
-                        <label class="form-label" for="usu_nom">Nombre</label>
-                        <input type="text" class="form-control" id="usu_nom" name="usu_nom" placeholder="Ingrese Nombre" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="usu_ape">Apellido</label>
-                        <input type="text" class="form-control" id="usu_ape" name="usu_ape" placeholder="Ingrese Apellido" required>
+                        <label class="form-label" for="usu_nom">Empleado</label>
+                        <select id="id_empleado" name="id_empleado" class="form-control" required="required">
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -32,7 +28,7 @@
                         <label class="form-label" for="rol_id">Rol</label>
                         <select class="form-control" id="rol_id" name="rol_id">
                             <option value="2">Administrador</option>
-                            <option value="1">Usuario</option>
+                            <option value="1">Supervisor</option>
                         </select>
                     </div>
 

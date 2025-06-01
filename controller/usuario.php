@@ -6,10 +6,10 @@
     switch($_GET["op"]){
         case "guardaryeditar":
             if(empty($_POST["usu_id"])){       
-                $usuario->insert_usuario($_POST["usu_nom"],$_POST["usu_ape"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);     
+                $usuario->insert_usuario($_POST["id_empleado"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);     
             }
             else {
-                $usuario->update_usuario($_POST["usu_id"],$_POST["usu_nom"],$_POST["usu_ape"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);
+                $usuario->update_usuario($_POST["usu_id"],$_POST["id_empleado"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);
             }
         break;
 
@@ -18,12 +18,12 @@
             $data= Array();
             foreach($datos as $row){
                 $sub_array = array();
-                $sub_array[] = $row["nombrecompleto"];
+                $sub_array[] = $row["empleado"];
                 $sub_array[] = $row["usu_correo"];
                 $sub_array[] = $row["usu_pass"];
 
                 if ($row["rol_id"]=="1"){
-                    $sub_array[] = '<span class="btn btn-inline btn-success btn-sm">Usuario</span>';
+                    $sub_array[] = '<span class="btn btn-inline btn-success btn-sm">Supervisor</span>';
                 }else{
                     $sub_array[] = '<span class="btn btn-inline btn-info btn-sm">Administrador</span>';
                 }
@@ -51,8 +51,7 @@
                 foreach($datos as $row)
                 {
                     $output["usu_id"] = $row["usu_id"];
-                    $output["usu_nom"] = $row["usu_nom"];
-                    $output["usu_ape"] = $row["usu_ape"];
+                    $output["id_empleado"] = $row["id_empleado"];
                     $output["usu_correo"] = $row["usu_correo"];
                     $output["usu_pass"] = $row["usu_pass"];
                     $output["rol_id"] = $row["rol_id"];

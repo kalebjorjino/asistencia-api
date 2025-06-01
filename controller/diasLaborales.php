@@ -6,14 +6,26 @@ $diasLaborales = new DiasLaborales();
 switch($_GET["op"]) {
 
     case "guardaryeditar":
-        if(empty($_POST["id"])) {       
-            // Insertar nuevo día laboral
-            $diasLaborales->insert_dia_laboral($_POST["id_horario"], $_POST["dia"], $_POST["activo"]);     
+    if(empty($_POST["id"])) {
+        // Insertar nuevo día laboral
+        $result = $diasLaborales->insert_dia_laboral($_POST["id_horario"], $_POST["dia"], $_POST["activo"]);
+        if ($result === false) {
+            echo json_encode(["status" => "error", "message" => "Error: Día duplicado para ese horario."]);
         } else {
-            // Actualizar día laboral existente
-            $diasLaborales->update_dia_laboral($_POST["id"], $_POST["dia"], $_POST["activo"]);
+            echo json_encode(["status" => "success", "message" => "Día laboral insertado correctamente."]);
         }
-        break;
+    } else {
+        // Actualizar día laboral existente
+        // Aquí agregamos id_horario para la validación del modelo
+        $result = $diasLaborales->update_dia_laboral($_POST["id"], $_POST["id_horario"], $_POST["dia"], $_POST["activo"]);
+        if ($result === false) {
+            echo json_encode(["status" => "error", "message" => "Error: Día duplicado para ese horario."]);
+        } else {
+            echo json_encode(["status" => "success", "message" => "Día laboral actualizado correctamente."]);
+        }
+    }
+    break;
+
 
     case "listar":
         $datos = $diasLaborales->get_dias_laborales();

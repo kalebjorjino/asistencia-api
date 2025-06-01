@@ -12,20 +12,31 @@
                 $html;
                 foreach($datos as $row)
                 {
-                    $html.= "<option value='".$row['id_horario']."'>".$row['id_horario']."</option>";
+                     $html.= "<option value='".$row['id_horario']."'>".$row['id_horario']." ".$row['empleado']."</option>";
                 }
                 echo $html;
             }
         break;
          
          case "guardaryeditar":
-            if(empty($_POST["id"])){       
-                $horario->insert_horario($_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);     
-            }
-            else {
-                $horario->update_horario($_POST["id_horario"],$_POST["id_empleado"],$_POST["id_turno"],$_POST["fecha_inicio"],$_POST["fecha_fin"]);
-            }
-        break;
+    // Sanitizar y validar inputs
+    $id_horario = isset($_POST["id_horario"]) ? $_POST["id_horario"] : null;
+    $id_empleado = isset($_POST["id_empleado"]) ? $_POST["id_empleado"] : null;
+    $id_turno = isset($_POST["id_turno"]) ? $_POST["id_turno"] : null;
+    $fecha_inicio = isset($_POST["fecha_inicio"]) ? $_POST["fecha_inicio"] : null;
+    $fecha_fin = isset($_POST["fecha_fin"]) ? $_POST["fecha_fin"] : null;
+
+    if (empty($id_horario)) {
+        // Insertar nuevo
+        $respuesta = $horario->insert_horario($id_empleado, $id_turno, $fecha_inicio, $fecha_fin);
+    } else {
+        // Actualizar existente
+        $respuesta = $horario->update_horario($id_horario, $id_empleado, $id_turno, $fecha_inicio, $fecha_fin);
+    }
+
+    echo json_encode($respuesta);
+    break;
+
 
         case "listar":
             $datos=$horario->get_horario();
@@ -34,7 +45,7 @@
                 $sub_array = array();
                 $sub_array[] = $row["id_horario"];
                 $sub_array[] = $row["empleado"];
-                $sub_array[] = $row["nombre"];
+                $sub_array[] = $row["turno"];
                 $sub_array[] = $row["fecha_inicio"];
                 $sub_array[] = $row["fecha_fin"];
                 $sub_array[] = '<button type="button" onClick="editar('.$row["id_horario"].');"  id="'.$row["id_horario"].'" class="btn btn-inline btn-warning btn-sm ladda-button">Editar</button>';
@@ -50,9 +61,11 @@
             echo json_encode($results);
         break;
 
-        case "eliminar":
-            $horario->delete_horario($_POST["id_horario"]);
-        break;
+      case "eliminar":
+    $id_horario = isset($_POST["id_horario"]) ? $_POST["id_horario"] : null;
+    $respuesta = $horario->delete_horario($id_horario);
+    echo json_encode($respuesta);
+    break;
 
         case "mostrar";
             $datos=$horario->get_horario_x_id($_POST["id_horario"]);  

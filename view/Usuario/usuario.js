@@ -85,6 +85,10 @@ $(document).ready(function(){
             }
         }     
     }).DataTable(); 
+    
+      $.post("../../controller/empleado.php?op=combo",function(data, status){
+        $('#id_empleado').html(data);
+    });
 
 });
 
@@ -94,8 +98,7 @@ function editar(usu_id){
     $.post("../../controller/usuario.php?op=mostrar", {usu_id : usu_id}, function (data) {
         data = JSON.parse(data);
         $('#usu_id').val(data.usu_id);
-        $('#usu_nom').val(data.usu_nom);
-        $('#usu_ape').val(data.usu_ape);
+        $('#id_empleado').val(data.id_empleado);
         $('#usu_correo').val(data.usu_correo);
         $('#usu_pass').val(data.usu_pass);
         $('#rol_id').val(data.rol_id).trigger('change');

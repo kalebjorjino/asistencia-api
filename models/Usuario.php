@@ -13,7 +13,10 @@
                         header("Location:".Conectar::ruta()."login.php?m=2");
                         exit();
                     }else{
-                        $sql = "SELECT * FROM tm_usuario WHERE usu_correo=? and usu_pass=? and rol_id=? and est=1";
+                        $sql = "SELECT u.*, e.nombre AS empleado
+                        FROM tm_usuario u
+                        INNER JOIN empleados e ON u.id_empleado = e.id
+                        WHERE u.usu_correo=? and u.usu_pass=? and u.rol_id=? and u.est=1";
                         $stmt = $conectar->prepare($sql);
                         $stmt->bindValue(1, $correo);
                         $stmt->bindValue(2, $pass);
@@ -22,10 +25,10 @@
                         $resultado = $stmt->fetch();
                         if (is_array($resultado) and count($resultado)>0){
                             $_SESSION["usu_id"] = $resultado["usu_id"];
-                            $_SESSION["usu_nom"] = $resultado["usu_nom"];
-                            $_SESSION["usu_ape"] = $resultado["usu_ape"];
+                            $_SESSION["id_empleado"] = $resultado["id_empleado"];
+                            $_SESSION["empleado"] = $resultado["empleado"];
                             $_SESSION["rol_id"] = $resultado["rol_id"];
-                            header("Location:".Conectar::ruta()."view/Empleado/");
+                            header("Location:".Conectar::ruta()."view/Asistencia/");
                             exit();
                         }else{
                             header("Location:".Conectar::ruta()."login.php?m=1");
@@ -42,38 +45,35 @@
             }
         }
 
-        public function insert_usuario($usu_nom,$usu_ape,$usu_correo,$usu_pass,$rol_id){
+        public function insert_usuario($id_empleado,$usu_correo,$usu_pass,$rol_id){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="INSERT INTO tm_usuario (usu_id, usu_nom, usu_ape, usu_correo, usu_pass, rol_id, fech_crea, fech_modi, fech_elim, est) VALUES (NULL,UPPER(?),UPPER(?),UPPER(?),MD5(?),?,now(), NULL, NULL, '1');";
+            $sql="INSERT INTO tm_usuario (usu_id, id_empleado, usu_correo, usu_pass, rol_id, fech_crea, fech_modi, fech_elim, est) VALUES (NULL,UPPER(?),UPPER(?),MD5(?),?,now(), NULL, NULL, '1');";
             $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $usu_nom);
-            $sql->bindValue(2, $usu_ape);
-            $sql->bindValue(3, $usu_correo);
-            $sql->bindValue(4, $usu_pass);
-            $sql->bindValue(5, $rol_id);
+            $sql->bindValue(1, $id_empleado);
+            $sql->bindValue(2, $usu_correo);
+            $sql->bindValue(3, $usu_pass);
+            $sql->bindValue(4, $rol_id);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
 
-        public function update_usuario($usu_id,$usu_nom,$usu_ape,$usu_correo,$usu_pass,$rol_id){
+        public function update_usuario($usu_id,$id_empleado,$usu_correo,$usu_pass,$rol_id){
             $conectar= parent::conexion();
             parent::set_names();
             $sql="UPDATE tm_usuario set
-                usu_nom = ?,
-                usu_ape = ?,
+                id_empleado = ?,
                 usu_correo = ?,
                 usu_pass = ?,
                 rol_id = ?
                 WHERE
                 usu_id = ?";
             $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $usu_nom);
-            $sql->bindValue(2, $usu_ape);
-            $sql->bindValue(3, $usu_correo);
-            $sql->bindValue(4, $usu_pass);
-            $sql->bindValue(5, $rol_id);
-            $sql->bindValue(6, $usu_id);
+            $sql->bindValue(1, $id_empleado);
+            $sql->bindValue(2, $usu_correo);
+            $sql->bindValue(3, $usu_pass);
+            $sql->bindValue(4, $rol_id);
+            $sql->bindValue(5, $usu_id);
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
@@ -98,18 +98,16 @@
             $conectar= parent::conexion();
             parent::set_names();
             $sql="SELECT 
-            tm_usuario.usu_id,
-            CONCAT(
-                CONCAT(UPPER(LEFT(tm_usuario.usu_nom, 1)), LOWER(SUBSTRING(tm_usuario.usu_nom, 2))), ' ', 
-                CONCAT(UPPER(LEFT(tm_usuario.usu_ape, 1)), LOWER(SUBSTRING(tm_usuario.usu_ape, 2)))
-            ) AS nombrecompleto,
-            tm_usuario.usu_correo,
-            tm_usuario.usu_pass,
-            tm_usuario.rol_id
+            u.usu_id,
+            e.nombre AS empleado,
+            u.usu_correo,
+            u.usu_pass,
+            u.rol_id
         FROM 
-            tm_usuario
+            tm_usuario u
+            INNER JOIN empleados e ON u.id_empleado = e.id
         WHERE
-            tm_usuario.est = 1;";
+            u.est = 1;";
             $sql=$conectar->prepare($sql);
             $sql->execute();
             return $resultado=$sql->fetchAll();
@@ -119,17 +117,18 @@
             $conectar= parent::conexion();
             parent::set_names();
             $sql="SELECT 
-            tm_usuario.usu_id,
-            tm_usuario.usu_nom,
-            tm_usuario.usu_ape,
-            tm_usuario.usu_correo,
-            tm_usuario.usu_pass,
-            tm_usuario.rol_id
-                FROM 
-                tm_usuario
-                WHERE
-                tm_usuario.est = 1
-                AND tm_usuario.usu_id = ?";
+            u.usu_id,
+            e.id AS id_empleado,
+            e.nombre AS empleado,
+            u.usu_correo,
+            u.usu_pass,
+            u.rol_id
+        FROM 
+            tm_usuario u
+            INNER JOIN empleados e ON u.id_empleado = e.id
+        WHERE
+            u.est = 1
+                AND u.usu_id = ?";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $usu_id);
             $sql->execute();

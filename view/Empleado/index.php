@@ -39,9 +39,14 @@
 						<tr>
 							
                                                 <th class="text-center" style="width: 5%;">ID</th>
+												<th class="text-center" style="width: 5%;">Supervisor</th>
                                                 <th class="text-center" style="width: 5%;">DNI</th>
                                                 <th class="text-center" style="width: 5%;">Nombre</th>
                                                 <th class="text-center" style="width: 5%;">Profesion</th>
+                                                <th class="text-center" style="width: 5%;">departamento</th>
+												<th class="text-center" style="width: 5%;">Unidad</th>
+												<th class="text-center" style="width: 5%;">Oficina</th>
+												<th class="text-center" style="width: 5%;">Servicio</th>
                                                 <th class="text-center" style="width: 5%;">Fecha Registro</th>
                                                 <th class="text-center" style="width: 5%;"></th>
                                                 <th class="text-center" style="width: 5%;"></th>

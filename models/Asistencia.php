@@ -1,5 +1,21 @@
 <?php
     class Asistencia extends Conectar{
+        
+        function traducirDia($diaIngles) {
+    $dias = [
+        'Monday' => 'Lunes',
+        'Tuesday' => 'Martes',
+        'Wednesday' => 'Miércoles',
+        'Thursday' => 'Jueves',
+        'Friday' => 'Viernes',
+        'Saturday' => 'Sábado',
+        'Sunday' => 'Domingo'
+    ];
+    return $dias[$diaIngles] ?? null;
+}
+        
+        
+        
         public function get_asistencia(){
             $conectar=parent::conexion();
             parent::set_names();
@@ -51,6 +67,7 @@
             $sql->execute();
             return $resultado=$sql->fetchAll(PDO::FETCH_ASSOC);
         }
+        
 
       public function crearAsistencia($usuarioId, $ubicacion, $foto){
         $conectar = parent::conexion();
@@ -60,17 +77,18 @@
         $horaEntrada = new DateTime('now', $zonaHoraria);
         $horaEntradaStr = $horaEntrada->format('Y-m-d H:i:s');
         $fechaActual = $horaEntrada->format('Y-m-d');
-        $diaSemana = $horaEntrada->format('N'); // 1 (lunes) a 7 (domingo)
+        $diaSemanaNumero = $horaEntrada->format('N'); // 1 (lunes) a 7 (domingo)
+        $diaSemanaTextoIngles = $horaEntrada->format('l'); // Monday, Tuesday, etc.
 
         // Buscar horario vigente del empleado
         $sqlHorario = "SELECT h.id_horario, h.id_turno 
-                       FROM horarios h
-                       WHERE h.id_empleado = ? 
-                         AND h.fecha_inicio <= ? 
-                         AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
-                         AND h.est = 1 
-                       ORDER BY h.fecha_inicio DESC 
-                       LIMIT 1";
+                        FROM horarios h
+                        WHERE h.id_empleado = ? 
+                          AND h.fecha_inicio <= ? 
+                          AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
+                          AND h.est = 1 
+                        ORDER BY h.fecha_inicio DESC 
+                        LIMIT 1";
         $stmtHorario = $conectar->prepare($sqlHorario);
         $stmtHorario->bindValue(1, $usuarioId);
         $stmtHorario->bindValue(2, $fechaActual);
@@ -91,8 +109,8 @@
                             AND dia = ? 
                             AND est = 1";
         $stmtDiaLaboral = $conectar->prepare($sqlDiaLaboral);
-        $stmtDiaLaboral->bindValue(1, $horario['id']);
-        $stmtDiaLaboral->bindValue(2, $diaSemana);
+        $stmtDiaLaboral->bindValue(1, $horario['id_horario']);
+        $stmtDiaLaboral->bindValue(2, $this->traducirDia($diaSemanaTextoIngles));
         $stmtDiaLaboral->execute();
         $diaLaboral = $stmtDiaLaboral->fetch(PDO::FETCH_ASSOC);
 
@@ -151,7 +169,7 @@
         return $conectar->lastInsertId();
     }
 
-        public function tieneEntradaActiva($empleadoId){
+    public function tieneEntradaActiva($empleadoId){
             $conectar=parent::conexion();
             parent::set_names();
             $sql="SELECT id_as AS idAsistencia FROM asistencia WHERE id_empleado = ? AND hora_salida IS NULL ORDER BY hora_entrada DESC LIMIT 1";
@@ -168,10 +186,10 @@
 
             // 1. Obtener el registro pendiente (sin hora_salida)
             $sql = "SELECT id_as, hora_entrada 
-                    FROM asistencia 
-                    WHERE id_empleado = ? AND hora_salida IS NULL 
-                    ORDER BY hora_entrada DESC 
-                    LIMIT 1";
+                     FROM asistencia 
+                     WHERE id_empleado = ? AND hora_salida IS NULL 
+                     ORDER BY hora_entrada DESC 
+                     LIMIT 1";
             $stmt = $conectar->prepare($sql);
             $stmt->bindValue(1, $empleadoId);
             $stmt->execute();
@@ -189,13 +207,13 @@
 
             // 2. Obtener horario vigente para esa fecha y empleado
             $sqlHorario = "SELECT h.id_horario, h.id_turno 
-                           FROM horarios h
-                           WHERE h.id_empleado = ? 
-                             AND h.fecha_inicio <= ? 
-                             AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
-                             AND h.est = 1 
-                           ORDER BY h.fecha_inicio DESC 
-                           LIMIT 1";
+                            FROM horarios h
+                            WHERE h.id_empleado = ? 
+                              AND h.fecha_inicio <= ? 
+                              AND (h.fecha_fin IS NULL OR h.fecha_fin >= ?) 
+                              AND h.est = 1 
+                            ORDER BY h.fecha_inicio DESC 
+                            LIMIT 1";
             $stmtHorario = $conectar->prepare($sqlHorario);
             $stmtHorario->bindValue(1, $empleadoId);
             $stmtHorario->bindValue(2, $fechaAsistencia);
@@ -247,10 +265,10 @@
 
             // 5. Actualizar asistencia
             $sqlUpdate = "UPDATE asistencia SET 
-                            hora_salida = CURRENT_TIMESTAMP, 
-                            horas_trabajadas = ?, 
-                            horas_extras = ?
-                          WHERE id_as = ?";
+                                hora_salida = CURRENT_TIMESTAMP, 
+                                horas_trabajadas = ?, 
+                                horas_extras = ?
+                              WHERE id_as = ?";
             $stmtUpdate = $conectar->prepare($sqlUpdate);
             $stmtUpdate->bindValue(1, $horasTrabajadas);
             $stmtUpdate->bindValue(2, $horasExtras);

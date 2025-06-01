@@ -1,0 +1,6 @@
+[01-Jun-2025 02:49:35 UTC] PHP Warning:  Undefined array key "usu_nom" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38
+[01-Jun-2025 02:49:35 UTC] PHP Warning:  Undefined array key "usu_ape" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38
+[01-Jun-2025 02:49:51 UTC] PHP Warning:  Undefined array key "usu_nom" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38
+[01-Jun-2025 02:49:51 UTC] PHP Warning:  Undefined array key "usu_ape" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38
+[01-Jun-2025 13:37:27 UTC] PHP Warning:  Undefined array key "usu_nom" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38
+[01-Jun-2025 13:37:27 UTC] PHP Warning:  Undefined array key "usu_ape" in /home/megaboti/public_html/asistencia/view/MainHeader/header.php on line 38

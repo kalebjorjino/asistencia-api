@@ -8,29 +8,55 @@ function init(){
 
 function guardaryeditar(e){
     e.preventDefault();
-	var formData = new FormData($("#diaslab_form")[0]);
+    var formData = new FormData($("#diaslab_form")[0]);
     $.ajax({
         url: "../../controller/diasLaborales.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
-        success: function(datos){    
-            console.log(datos);
-            $('#diaslab_form')[0].reset();
-            $("#modalDiasLab").modal('hide');
-            $('#datatable-buttons').DataTable().ajax.reload();
+        success: function(respuesta){
+            console.log(respuesta);
+            var data = JSON.parse(respuesta);
 
+            if(data.status === "success"){
+                $('#diaslab_form')[0].reset();
+                $("#modalDiasLab").modal('hide');
+                $('#datatable-buttons').DataTable().ajax.reload();
+
+                swal({
+                    title: "¡Éxito!",
+                    text: data.message,
+                    icon: "success",
+                    button: "Aceptar"
+                });
+            } else if(data.status === "error"){
+                swal({
+                    title: "Error",
+                    text: data.message,
+                    icon: "error",
+                    button: "Aceptar"
+                });
+            } else {
+                // Para otros casos no contemplados
+                swal({
+                    title: "Aviso",
+                    text: "Ocurrió un error inesperado.",
+                    icon: "warning",
+                    button: "Aceptar"
+                });
+            }
+        },
+        error: function(e){
+            console.log("Error en AJAX:", e.responseText);
             swal({
-                title: "Dias Laboral!",
-                text: "Completado.",
-                type: "success",
-                confirmButtonClass: "btn-success"
+                title: "Error",
+                text: "No se pudo procesar la solicitud.",
+                icon: "error",
+                button: "Aceptar"
             });
         }
     }); 
-
-
 }
 
 

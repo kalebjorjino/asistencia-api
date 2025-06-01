@@ -19,7 +19,7 @@
         }
         
         public static function ruta(){
-			return "http://localhost/asistencia-api/";
+			return "http://localhost/asistencia/";
 		}
       
 
