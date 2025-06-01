@@ -63,7 +63,7 @@ function listar(){
             'pdfHtml5'
         ],
         "ajax": {
-            url: '../../controller/asistencia.php?op=listar_filtrado', // URL del controlador PHP para obtener datos
+            url: '../../controller/reporte.php?op=listar_filtrado', // URL del controlador PHP para obtener datos
             type: "post", // Método de la petición
             dataType: "json", // Tipo de datos esperados
             data: function(d) {
