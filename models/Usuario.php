@@ -10,7 +10,7 @@
                     $pass = $_POST["usu_pass"];
                     $rol = $_POST["rol_id"];
                     if(empty($correo) and empty($pass)){
-                        header("Location:".Conectar::ruta()."login.php?m=2");
+                        header("Location:".Conectar::ruta()."index.php?m=2");
                         exit();
                     }else{
                         $sql = "SELECT u.*, e.nombre AS empleado
@@ -31,7 +31,7 @@
                             header("Location:".Conectar::ruta()."view/Asistencia/");
                             exit();
                         }else{
-                            header("Location:".Conectar::ruta()."login.php?m=1");
+                            header("Location:".Conectar::ruta()."index.php?m=1");
                             exit();
                         }
                     }
@@ -44,39 +44,75 @@
                 exit();
             }
         }
+        
+        
+        public function existe_rol_para_empleado($id_empleado, $rol_id, $usu_id = null) {
+    $conectar = parent::conexion();
+    parent::set_names();
 
-        public function insert_usuario($id_empleado,$usu_correo,$usu_pass,$rol_id){
-            $conectar= parent::conexion();
-            parent::set_names();
-            $sql="INSERT INTO tm_usuario (usu_id, id_empleado, usu_correo, usu_pass, rol_id, fech_crea, fech_modi, fech_elim, est) VALUES (NULL,UPPER(?),UPPER(?),MD5(?),?,now(), NULL, NULL, '1');";
-            $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $id_empleado);
-            $sql->bindValue(2, $usu_correo);
-            $sql->bindValue(3, $usu_pass);
-            $sql->bindValue(4, $rol_id);
-            $sql->execute();
-            return $resultado=$sql->fetchAll();
-        }
+    // Consulta que busca si ya existe el rol para ese empleado, excluyendo el usuario actual (si se edita)
+    $sql = "SELECT COUNT(*) as total FROM tm_usuario 
+            WHERE id_empleado = ? AND rol_id = ? AND est = 1";
 
-        public function update_usuario($usu_id,$id_empleado,$usu_correo,$usu_pass,$rol_id){
-            $conectar= parent::conexion();
-            parent::set_names();
-            $sql="UPDATE tm_usuario set
+    if ($usu_id !== null) {
+        $sql .= " AND usu_id != ?";
+    }
+
+    $stmt = $conectar->prepare($sql);
+    if ($usu_id !== null) {
+        $stmt->execute([$id_empleado, $rol_id, $usu_id]);
+    } else {
+        $stmt->execute([$id_empleado, $rol_id]);
+    }
+
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $resultado['total'] > 0;
+}
+
+       public function insert_usuario($id_empleado, $usu_correo, $usu_pass, $rol_id){
+    if ($this->existe_rol_para_empleado($id_empleado, $rol_id)) {
+        // Ya existe el rol para ese empleado
+        return ["error" => "El empleado ya tiene asignado ese rol."];
+    }
+
+    $conectar = parent::conexion();
+    parent::set_names();
+    $sql = "INSERT INTO tm_usuario (usu_id, id_empleado, usu_correo, usu_pass, rol_id, fech_crea, fech_modi, fech_elim, est) 
+            VALUES (NULL, UPPER(?), UPPER(?), ?, ?, now(), NULL, NULL, '1')";
+    $stmt = $conectar->prepare($sql);
+    $stmt->bindValue(1, $id_empleado);
+    $stmt->bindValue(2, $usu_correo);
+    $stmt->bindValue(3, $usu_pass);
+    $stmt->bindValue(4, $rol_id);
+    $stmt->execute();
+
+    return ["success" => true];
+}
+
+public function update_usuario($usu_id, $id_empleado, $usu_correo, $usu_pass, $rol_id){
+    if ($this->existe_rol_para_empleado($id_empleado, $rol_id, $usu_id)) {
+        // Ya existe el rol para ese empleado
+        return ["error" => "El empleado ya tiene asignado ese rol."];
+    }
+
+    $conectar = parent::conexion();
+    parent::set_names();
+    $sql = "UPDATE tm_usuario SET
                 id_empleado = ?,
                 usu_correo = ?,
                 usu_pass = ?,
                 rol_id = ?
-                WHERE
-                usu_id = ?";
-            $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $id_empleado);
-            $sql->bindValue(2, $usu_correo);
-            $sql->bindValue(3, $usu_pass);
-            $sql->bindValue(4, $rol_id);
-            $sql->bindValue(5, $usu_id);
-            $sql->execute();
-            return $resultado=$sql->fetchAll();
-        }
+            WHERE usu_id = ?";
+    $stmt = $conectar->prepare($sql);
+    $stmt->bindValue(1, $id_empleado);
+    $stmt->bindValue(2, $usu_correo);
+    $stmt->bindValue(3, $usu_pass);
+    $stmt->bindValue(4, $rol_id);
+    $stmt->bindValue(5, $usu_id);
+    $stmt->execute();
+
+    return ["success" => true];
+}
 
         public function delete_usuario($usu_id){
             $conectar= parent::conexion();

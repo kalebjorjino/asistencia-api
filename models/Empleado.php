@@ -23,6 +23,66 @@ class Empleado extends Conectar
         $sql->execute();
         return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+      public function get_asistencia_x_usu($usu_id)
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+
+    $sql = "SELECT
+                a.id_as AS idAsistencia,
+                e.nombre AS nombreEmpleado,
+                a.hora_entrada AS horaEntrada,
+                a.hora_salida AS horaSalida,
+                a.tardanza AS tardanza,
+                a.horas_extras AS horas_extras,
+                a.horas_trabajadas AS horas_trabajadas,
+                a.ubicacion AS ubicacionAsistencia,
+                a.foto AS fotoAsistencia
+            FROM tm_usuario u
+            INNER JOIN empleados e ON u.id_empleado = e.id
+            INNER JOIN asistencia a ON a.id_empleado = e.id
+            WHERE u.usu_id = ?
+              AND a.est = 1
+            ORDER BY a.hora_entrada DESC;";
+
+    $sql = $conectar->prepare($sql);
+    $sql->bindValue(1, $usu_id);
+    $sql->execute();
+
+    return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+public function get_asistencia_for_supervisor($supervisor_usu_id)
+{
+    $conectar = parent::conexion();
+    parent::set_names();
+
+    // Esta consulta busca la asistencia de todos los empleados
+    // cuyo usu_id en la tabla empleados coincide con el usu_id del supervisor.
+    $sql = "SELECT
+                a.id_as AS idAsistencia,
+                e.nombre AS nombreEmpleado,
+                a.hora_entrada AS horaEntrada,
+                a.hora_salida AS horaSalida,
+                a.tardanza AS tardanza,
+                a.horas_extras AS horas_extras,
+                a.horas_trabajadas AS horas_trabajadas,
+                a.ubicacion AS ubicacionAsistencia,
+                a.foto AS fotoAsistencia
+            FROM asistencia a
+            INNER JOIN empleados e ON a.id_empleado = e.id
+            WHERE e.usu_id = ? 
+              AND a.est = 1
+            ORDER BY a.hora_entrada DESC;";
+
+    $sql = $conectar->prepare($sql);
+    $sql->bindValue(1, $supervisor_usu_id);
+    $sql->execute();
+
+    return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
 
@@ -47,19 +107,20 @@ class Empleado extends Conectar
         return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_empleado($dni, $nombre, $profesion, $id_departamento, $id_unidad, $id_oficina, $id_servicio)
+   public function insert_empleado($usu_id,$dni, $nombre, $profesion, $id_departamento, $id_unidad, $id_oficina, $id_servicio)
     {
         $conectar = parent::conexion();
         parent::set_names();
-        $sql = "INSERT INTO empleados (id, dni, nombre, profesion, id_departamento, id_unidad, id_oficina, id_servicio, fecha_registro, est) VALUES (NULL,?,?,?,?,?,?,?,now(),'1');";
+        $sql = "INSERT INTO empleados (id, usu_id, dni, nombre, profesion, id_departamento, id_unidad, id_oficina, id_servicio, fecha_registro, est) VALUES (NULL,?,?,?,?,?,?,?,?,now(),'1');";
         $sql = $conectar->prepare($sql);
-        $sql->bindValue(1, $dni);
-        $sql->bindValue(2, $nombre);
-        $sql->bindValue(3, $profesion);
-        $sql->bindValue(4, $id_departamento);
-        $sql->bindValue(5, $id_unidad);
-        $sql->bindValue(6, $id_oficina);
-        $sql->bindValue(7, $id_servicio);
+        $sql->bindValue(1, $usu_id);
+        $sql->bindValue(2, $dni);
+        $sql->bindValue(3, $nombre);
+        $sql->bindValue(4, $profesion);
+        $sql->bindValue(5, $id_departamento);
+        $sql->bindValue(6, $id_unidad);
+        $sql->bindValue(7, $id_oficina);
+        $sql->bindValue(8, $id_servicio);
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }
@@ -90,7 +151,7 @@ class Empleado extends Conectar
         $sql->execute();
         return $resultado = $sql->fetchAll();
     }
-
+    
     public function validar_dni_existente($dni, $id = null)
     {
         $conectar = parent::conexion();
@@ -196,7 +257,7 @@ WHERE
         return $resultado = $sql->fetchAll();
     }
 
-    public function get_empleado_x_usu($usu_id)
+     public function get_empleado_x_usu($usu_id)
     {
         $conectar = parent::conexion();
         parent::set_names();

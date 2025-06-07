@@ -8,30 +8,70 @@ function init(){
 
 function guardaryeditar(e){
     e.preventDefault();
-	var formData = new FormData($("#usuario_form")[0]);
+    var formData = new FormData($("#usuario_form")[0]);
     $.ajax({
         url: "../../controller/usuario.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
-        success: function(datos){    
+        success: function(datos){
             console.log(datos);
-            $('#usuario_form')[0].reset();
-            $("#modalUsuario").modal('hide');
-            $('#datatable-buttons').DataTable().ajax.reload();
+            // Intentamos parsear la respuesta JSON
+            try {
+                var res = JSON.parse(datos);
+                if(res.status === "error"){
+                    // Mostrar alerta de error con mensaje personalizado
+                    swal({
+                        title: "Error",
+                        text: res.message,
+                        icon: "error",
+                        button: "Aceptar"
+                    });
+                } else if(res.status === "success"){
+                    // Operación exitosa
+                    $('#usuario_form')[0].reset();
+                    $("#modalUsuario").modal('hide');
+                    $('#datatable-buttons').DataTable().ajax.reload();
 
+                    swal({
+                        title: "Usuario!",
+                        text: "Completado.",
+                        icon: "success",
+                        button: "Aceptar"
+                    });
+                } else {
+                    // Respuesta inesperada
+                    swal({
+                        title: "Error",
+                        text: "Respuesta inesperada del servidor.",
+                        icon: "error",
+                        button: "Aceptar"
+                    });
+                }
+            } catch(e) {
+                // No es JSON o error en parseo
+                swal({
+                    title: "Error",
+                    text: "Error procesando la respuesta del servidor.",
+                    icon: "error",
+                    button: "Aceptar"
+                });
+                console.error("Error parseando JSON:", e);
+            }
+        },
+        error: function(xhr, status, error) {
             swal({
-                title: "Usuario!",
-                text: "Completado.",
-                type: "success",
-                confirmButtonClass: "btn-success"
+                title: "Error",
+                text: "Error en la comunicación con el servidor.",
+                icon: "error",
+                button: "Aceptar"
             });
+            console.error("Error en AJAX:", error);
         }
-    }); 
-
-
+    });
 }
+
 
 $(document).ready(function(){
     tabla=$('#datatable-buttons').dataTable({

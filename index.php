@@ -12,7 +12,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Registro de Visitas</title>
+    <title>Asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -61,6 +61,37 @@
                                     <div class="form-group mb-3 text-center text-uppercase">
                                             <label for="" class="font-weight-medium" id="lbltitulo">Ingreso de Administrador</label>
                                         </div>
+                                        
+                                        <?php
+                        if (isset($_GET["m"])){
+                            switch($_GET["m"]){
+                                case "1";
+                                    ?>
+                                        <div class="alert alert-warning alert-icon alert-close alert-dismissible fade show" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true"></span>
+                                            </button>
+                                            <i class="font-icon font-icon-warning"></i>
+                                            El Usuario y/o Contraseña son incorrectos.
+                                        </div>
+                                    <?php
+                                break;
+
+                                case "2";
+                                    ?>
+                                        <div class="alert alert-warning alert-icon alert-close alert-dismissible fade show" role="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">��</span>
+                                            </button>
+                                            <i class="font-icon font-icon-warning"></i>
+                                            Los campos estan vacios.
+                                        </div>
+                                    <?php
+                                break;
+                            }
+                        }
+                    ?>
+                    
                                         <div class="form-group mb-3">
                                             <label for="emailaddress" class="font-weight-medium">Usuario</label>
                                             <input class="form-control" type="text" id="usu_correo" name="usu_correo"
@@ -70,7 +101,7 @@
                                         <div class="form-group mb-3">
                                             <label for="password" class="font-weight-medium">Contraseña</label>
                                             <input class="form-control" type="password" id="usu_pass" name="usu_pass" required="" 
-                                                placeholder="Ingrese Contraseña">
+                                                placeholder="Password">
                                         </div>
                                         
                                         <div class="form-group mb-3">
@@ -113,6 +144,9 @@
     <script src="./public/assets/libs/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <script src="./public/assets/libs/metismenu/metisMenu.min.js"></script>
     <script type="text/javascript" src="./public/assets/libs/match-height/jquery.matchHeight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
    
 
     <!-- App js -->

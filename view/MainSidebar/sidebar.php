@@ -4,18 +4,19 @@ if ($_SESSION["rol_id"] == 1) {
 ?>
     <nav class="side-menu">
         <ul class="side-menu-list">
+            <li class="magenta">
+                <a href="..\Asistencia\">
+                    <span class="font-icon font-icon-contacts"></span>
+                    <span class="lbl">Asistencias</span>
+                </a>
+            </li>
             <li class="blue-dirty">
                 <a href="..\Empleado\">
                     <span class="glyphicon glyphicon-th"></span>
                     <span class="lbl">Empleados</span>
                 </a>
             </li>
-            <li class="blue-dirty">
-                <a href="..\Reporte\">
-                    <span class="glyphicon glyphicon-th"></span>
-                    <span class="lbl">Reporte</span>
-                </a>
-            </li>
+            
         </ul>
     </nav>
 <?php
@@ -63,6 +64,13 @@ if ($_SESSION["rol_id"] == 1) {
                     <li><a href="..\Oficina\"><span class="lbl">Oficina</span></a></li>
                     <li><a href="..\Servicio\"><span class="lbl">Servicio</span></a></li>
                 </ul>
+            </li>
+            
+            <li class="blue-dirty">
+                <a href="..\Reporte\">
+                    <span class="glyphicon glyphicon-th"></span>
+                    <span class="lbl">Reporte</span>
+                </a>
             </li>
 
             <li class="blue-dirty">

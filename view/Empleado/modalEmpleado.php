@@ -7,6 +7,7 @@
             <form method="post" id="empleado_form">
                 <div class="modal-body">
                     <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="usu_id" name="usu_id" value="<?php echo $_SESSION["usu_id"] ?>">
 
                     <div class="form-group">
                         <label class="form-label" for="dni">DNI</label>

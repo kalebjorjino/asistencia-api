@@ -9,6 +9,10 @@
 </head>
 <body class="with-side-menu">
 
+<!-- Campos ocultos para pasar variables de sesi®Æn a JS -->
+    <input type="hidden" id="user_idx" value="<?php echo $_SESSION['usu_id']; ?>">
+    <input type="hidden" id="rol_idx" value="<?php echo $_SESSION['rol_id']; ?>">
+
     <?php require_once("../MainHeader/header.php");?>
 
     <div class="mobile-menu-left-overlay"></div>
@@ -41,7 +45,7 @@
                                                 <th class="text-center" style="width: 5%;">Empleado</th>
                                                 <th class="text-center" style="width: 5%;">Entrada</th>
                                                 <th class="text-center" style="width: 5%;">Salida</th>
-                                                <th class="text-center" style="width: 5%;">Ubicaci√≥n</th>
+                                                <th class="text-center" style="width: 5%;">Ubicaci®Æn</th>
                                                 <th class="text-center" style="width: 5%;">Foto</th>
 												<th class="text-center" style="width: 5%;">Tardanzas</th>
 												<th class="text-center" style="width: 5%;">Horas Trabajadas</th>

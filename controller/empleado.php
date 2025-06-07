@@ -36,9 +36,9 @@
             }
         break;
 
-          case "guardaryeditar":
+         case "guardaryeditar":
             if(empty($_POST["id"])){       
-                $empleado->insert_empleado($_POST["dni"],$_POST["nombre"],$_POST["profesion"],$_POST["id_departamento"],$_POST["id_unidad"],$_POST["id_oficina"],$_POST["id_servicio"]);     
+                $empleado->insert_empleado($_POST["usu_id"],$_POST["dni"],$_POST["nombre"],$_POST["profesion"],$_POST["id_departamento"],$_POST["id_unidad"],$_POST["id_oficina"],$_POST["id_servicio"]);     
             }
             else {
                 $empleado->update_empleado($_POST["id"],$_POST["dni"],$_POST["nombre"],$_POST["profesion"],$_POST["id_departamento"],$_POST["id_unidad"],$_POST["id_oficina"],$_POST["id_servicio"]);
@@ -86,12 +86,66 @@ case "listar":
     );
     echo json_encode($results);
     break;
+    
+     case "listar_x_usu":
+    // Obtener usu_id y rol_id (usamos $_REQUEST por si acaso)
+    $usu_id = $_REQUEST["usu_id"];
+    // ¡IMPORTANTE! Asegúrate de que rol_id también se envíe desde el AJAX en asistencia.js
+    // y que el input rol_idx exista en index.php
+    $rol_id = $_REQUEST["rol_id"]; // Necesitarás añadir 'rol_id' a los datos enviados por AJAX
+
+    if ($rol_id == 1) {
+        // Si es Supervisor (rol_id = 1), llamar a la nueva función
+        $datos = $empleado->get_asistencia_for_supervisor($usu_id);
+    } else {
+        // Si es un usuario normal, llamar a la función original
+        $datos = $empleado->get_asistencia_x_usu($usu_id);
+    }
+    $data = array();
+
+    foreach ($datos as $row) {
+        $sub_array = array();
+
+        $sub_array[] = $row["idAsistencia"];
+        $sub_array[] = $row["nombreEmpleado"];
+        $sub_array[] = $row["horaEntrada"];
+        $sub_array[] = $row["horaSalida"];
+
+        if ($row["ubicacionAsistencia"] == "Ubicación no disponible") {
+            $sub_array[] = '<span class="text-danger font-weight-bold">' . $row["ubicacionAsistencia"] . '</span>';
+        } else {
+            $sub_array[] = $row["ubicacionAsistencia"];
+        }
+
+        $sub_array[] = '<img src="../../public/' . $row["fotoAsistencia"] . '" class="img-thumbnail" width="80" height="80" alt="Foto de Asistencia">';
+        $sub_array[] = $row["tardanza"];
+        $sub_array[] = $row["horas_trabajadas"];
+        $sub_array[] = $row["horas_extras"];
+
+        // Mostrar badge según tardanza: si es diferente de "00:00:00" llegó tarde, si no, puntualidad
+        if ($row["tardanza"] !== "00:00:00") {
+            $sub_array[] = '<button type="button" class="btn btn-inline btn-danger btn-sm ladda-button">Llegó tarde</button>';
+        } else {
+            $sub_array[] = '<button type="button" class="btn btn-inline btn-success btn-sm ladda-button">Puntualidad</button>';
+        }
+
+        $data[] = $sub_array;
+    }
+
+    $results = array(
+        "sEcho" => 1,
+        "iTotalRecords" => count($data),
+        "iTotalDisplayRecords" => count($data),
+        "aaData" => $data
+    );
+    echo json_encode($results);
+    break;
 
 
 
         
 
-        case "listar_empleados":
+         case "listar_empleados":
             $datos=$empleado->get_empleado();
             $data= Array();
             foreach($datos as $row){

@@ -19,7 +19,7 @@
         }
         
         public static function ruta(){
-			return "http://localhost/asistencia/";
+			return "https://www.megabotikas.com/asistencia/";
 		}
       
 

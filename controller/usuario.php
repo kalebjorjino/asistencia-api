@@ -4,14 +4,20 @@
     $usuario = new Usuario();
 
     switch($_GET["op"]){
-        case "guardaryeditar":
-            if(empty($_POST["usu_id"])){       
-                $usuario->insert_usuario($_POST["id_empleado"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);     
-            }
-            else {
-                $usuario->update_usuario($_POST["usu_id"],$_POST["id_empleado"],$_POST["usu_correo"],$_POST["usu_pass"],$_POST["rol_id"]);
-            }
-        break;
+       case "guardaryeditar":
+    if (empty($_POST["usu_id"])) {
+        $resultado = $usuario->insert_usuario($_POST["id_empleado"], $_POST["usu_correo"], $_POST["usu_pass"], $_POST["rol_id"]);
+    } else {
+        $resultado = $usuario->update_usuario($_POST["usu_id"], $_POST["id_empleado"], $_POST["usu_correo"], $_POST["usu_pass"], $_POST["rol_id"]);
+    }
+
+    if (isset($resultado["error"])) {
+        echo json_encode(["status" => "error", "message" => $resultado["error"]]);
+    } else {
+        echo json_encode(["status" => "success"]);
+    }
+    break;
+
 
         case "listar":
             $datos=$usuario->get_usuario();
